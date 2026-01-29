@@ -42,7 +42,6 @@ public static class AnalyticsService
 
 	public static async Task<string> StartSessionAsync()
 	{
-		_ = 1;
 		try
 		{
 			if (_settings == null)

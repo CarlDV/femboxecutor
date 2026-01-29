@@ -41,7 +41,6 @@ public static class Updater
 
 	private static async Task SilentUpdate(string currentVersion)
 	{
-		_ = 2;
 		try
 		{
 			using HttpClient client = new HttpClient();
@@ -85,7 +84,6 @@ public static class Updater
 
 	public static async Task CheckForUpdatesAsync(string currentVersion, bool autoUpdate = false)
 	{
-		_ = 2;
 		try
 		{
 			using HttpClient client = new HttpClient();
@@ -142,7 +140,6 @@ public static class Updater
 
 	public static async Task ManualCheck(string currentVersion)
 	{
-		_ = 3;
 		try
 		{
 			using HttpClient client = new HttpClient();
@@ -204,7 +201,6 @@ public static class Updater
 
 	private static async Task DownloadAndInstall(string url, bool silent)
 	{
-		_ = 2;
 		try
 		{
 			string tempPath = Path.GetTempPath();

@@ -65,7 +65,6 @@ public static class CloudSyncService
 
 	public static async Task<bool> DownloadSettings(bool applyImmediately = false)
 	{
-		_ = 1;
 		try
 		{
 			string deviceId = HardwareID.GetDeviceID();
@@ -102,7 +101,6 @@ public static class CloudSyncService
 
 	public static async Task<bool> MergeSyncFiles()
 	{
-		_ = 2;
 		try
 		{
 			_status.State = SyncState.Syncing;
@@ -148,19 +146,19 @@ public static class CloudSyncService
 			if (cloudData?.WorkspaceFiles != null)
 			{
 				mergedWorkspace.AddRange(cloudData.WorkspaceFiles);
-				foreach (SyncedFile cloudFile2 in cloudData.WorkspaceFiles)
+				foreach (SyncedFile cloudFileWorkspace in cloudData.WorkspaceFiles)
 				{
-					if (!localWorkspace.Any((SyncedFile f) => f.RelativePath == cloudFile2.RelativePath))
+					if (!localWorkspace.Any((SyncedFile f) => f.RelativePath == cloudFileWorkspace.RelativePath))
 					{
-						RestoreSingleWorkspaceFile(cloudFile2);
+						RestoreSingleWorkspaceFile(cloudFileWorkspace);
 						_status.FilesDownloaded++;
 					}
 				}
-				foreach (SyncedFile localFile2 in localWorkspace)
+				foreach (SyncedFile localFileWorkspace in localWorkspace)
 				{
-					if (!cloudData.WorkspaceFiles.Any((SyncedFile f) => f.RelativePath == localFile2.RelativePath))
+					if (!cloudData.WorkspaceFiles.Any((SyncedFile f) => f.RelativePath == localFileWorkspace.RelativePath))
 					{
-						mergedWorkspace.Add(localFile2);
+						mergedWorkspace.Add(localFileWorkspace);
 						_status.FilesUploaded++;
 					}
 				}
@@ -245,8 +243,8 @@ public static class CloudSyncService
 			string femboxDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "Femboxecutor");
 			if (Directory.Exists(femboxDir))
 			{
-				string[] files2 = Directory.GetFiles(femboxDir, "*", SearchOption.AllDirectories);
-				foreach (string file in files2)
+				string[] allFiles = Directory.GetFiles(femboxDir, "*", SearchOption.AllDirectories);
+				foreach (string file in allFiles)
 				{
 					try
 					{
@@ -280,8 +278,8 @@ public static class CloudSyncService
 			string workspaceDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Workspace");
 			if (Directory.Exists(workspaceDir))
 			{
-				string[] files2 = Directory.GetFiles(workspaceDir, "*", SearchOption.AllDirectories);
-				foreach (string file in files2)
+				string[] allFiles = Directory.GetFiles(workspaceDir, "*", SearchOption.AllDirectories);
+				foreach (string file in allFiles)
 				{
 					try
 					{

@@ -109,7 +109,6 @@ public partial class MainWindow : Window, IComponentConnector, IStyleConnector
 			AnalyticsService.Track("Access", "App Launched");
 			Task.Run(async delegate
 			{
-				_ = 1;
 				try
 				{
 					if (_settings.CloudSyncEnabled && _settings.AutoSyncOnStartup && await CloudSyncService.HasCloudSettings())
@@ -136,11 +135,11 @@ public partial class MainWindow : Window, IComponentConnector, IStyleConnector
 			};
 			File.AppendAllText("debug_startup.log", "InitializeComponent Success\n");
 		}
-		catch (Exception value)
+		catch (Exception ex)
 		{
 			try
 			{
-				File.AppendAllText("debug_startup.log", $"InitializeComponent FAILED: {value}\n");
+				File.AppendAllText("debug_startup.log", $"InitializeComponent FAILED: {ex}\n");
 			}
 			catch
 			{
@@ -435,7 +434,6 @@ public partial class MainWindow : Window, IComponentConnector, IStyleConnector
 
 	private async Task RunAutoExec()
 	{
-		_ = 2;
 		try
 		{
 			string autoExecPath = Path.Combine(_scriptsDir, "..", "autoexec");
@@ -469,9 +467,9 @@ public partial class MainWindow : Window, IComponentConnector, IStyleConnector
 					_api.Execute(content);
 					await Task.Delay(200);
 				}
-				catch (Exception value)
+				catch (Exception ex)
 				{
-					File.AppendAllText("debug_autoexec.log", $"EXCEPTION: {value}\n");
+					File.AppendAllText("debug_autoexec.log", $"EXCEPTION: {ex}\n");
 				}
 			}
 			LogConsole("[AutoExec] Complete!");
@@ -717,9 +715,9 @@ public partial class MainWindow : Window, IComponentConnector, IStyleConnector
 		{
 			if (MessageBox.Show("This will sync all your files between cloud and local.\n\nFiles on cloud will be downloaded if missing locally.\nFiles on local will be uploaded if missing on cloud.\n\nContinue?", "Cloud Sync", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
 			{
-				bool num = await CloudSyncService.MergeSyncFiles();
+				bool isSuccess = await CloudSyncService.MergeSyncFiles();
 				SyncStatus status = CloudSyncService.GetSyncStatus();
-				if (num)
+				if (isSuccess)
 				{
 					MessageBox.Show($"✅ Sync complete!\n\n↑ {status.FilesUploaded} files uploaded\n↓ {status.FilesDownloaded} files downloaded\n\nYour files are now identical on cloud and local.", "Cloud Sync Success", MessageBoxButton.OK, MessageBoxImage.Asterisk);
 				}
@@ -739,7 +737,6 @@ public partial class MainWindow : Window, IComponentConnector, IStyleConnector
 	{
 		try
 		{
-			_ = _settings.AnalyticsUserId;
 			Process.Start(new ProcessStartInfo("https://velocity-helper-bot.renern.workers.dev/dashboard")
 			{
 				UseShellExecute = true
@@ -803,11 +800,11 @@ public partial class MainWindow : Window, IComponentConnector, IStyleConnector
 				LoadBackground();
 			}
 		}
-		catch (Exception value)
+		catch (Exception ex)
 		{
 			try
 			{
-				File.AppendAllText("debug_bg.log", $"[{DateTime.Now}] ERROR: {value}\n");
+				File.AppendAllText("debug_bg.log", $"[{DateTime.Now}] ERROR: {ex}\n");
 			}
 			catch
 			{
@@ -1569,7 +1566,6 @@ public partial class MainWindow : Window, IComponentConnector, IStyleConnector
 
 	private async void FetchButton_Click(object sender, RoutedEventArgs e)
 	{
-		_ = 2;
 		try
 		{
 			string content = await GetMonacoContentAsync();
@@ -1604,7 +1600,6 @@ public partial class MainWindow : Window, IComponentConnector, IStyleConnector
 
 	private async void ConvertButton_Click(object sender, RoutedEventArgs e)
 	{
-		_ = 2;
 		try
 		{
 			string content = await GetMonacoContentAsync();
@@ -1702,7 +1697,6 @@ public partial class MainWindow : Window, IComponentConnector, IStyleConnector
 
 	private async void ExecuteButton_Click(object sender, RoutedEventArgs e)
 	{
-		_ = 4;
 		try
 		{
 			int pid = GetRobloxPid();

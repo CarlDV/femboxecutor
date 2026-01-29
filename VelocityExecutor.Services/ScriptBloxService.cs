@@ -20,13 +20,12 @@ public class ScriptBloxService
 
 	public async Task<ScriptBloxResponse> FetchRecentScriptsAsync(int page = 1)
 	{
-		_ = 1;
 		try
 		{
 			string url = $"{"https://scriptblox.com/api/script"}/fetch?page={page}";
-			HttpResponseMessage obj = await _httpClient.GetAsync(url);
-			obj.EnsureSuccessStatusCode();
-			return JsonSerializer.Deserialize<ScriptBloxResponse>(await obj.Content.ReadAsStringAsync());
+			HttpResponseMessage response = await _httpClient.GetAsync(url);
+			response.EnsureSuccessStatusCode();
+			return JsonSerializer.Deserialize<ScriptBloxResponse>(await response.Content.ReadAsStringAsync());
 		}
 		catch (Exception ex)
 		{
@@ -37,14 +36,13 @@ public class ScriptBloxService
 
 	public async Task<ScriptBloxResponse> SearchScriptsAsync(string query, int page = 1, string mode = "free")
 	{
-		_ = 1;
 		try
 		{
 			string encodedQuery = WebUtility.UrlEncode(query);
 			string url = $"{"https://scriptblox.com/api/script"}/search?q={encodedQuery}&page={page}&mode={mode}";
-			HttpResponseMessage obj = await _httpClient.GetAsync(url);
-			obj.EnsureSuccessStatusCode();
-			return JsonSerializer.Deserialize<ScriptBloxResponse>(await obj.Content.ReadAsStringAsync());
+			HttpResponseMessage response = await _httpClient.GetAsync(url);
+			response.EnsureSuccessStatusCode();
+			return JsonSerializer.Deserialize<ScriptBloxResponse>(await response.Content.ReadAsStringAsync());
 		}
 		catch (Exception ex)
 		{

@@ -293,7 +293,6 @@ public partial class SettingsWindow : Window, IComponentConnector
 
 	private async void SaveProfile_Click(object sender, RoutedEventArgs e)
 	{
-		_ = 4;
 		try
 		{
 			string username = ProfileUsernameBox.Text.Trim();

@@ -11,7 +11,6 @@ public static class CatboxService
 
 	public static async Task<string> UploadScriptAsync(string content)
 	{
-		_ = 1;
 		try
 		{
 			using HttpClient client = new HttpClient();

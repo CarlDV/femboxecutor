@@ -84,7 +84,6 @@ public class GameDetector
 
 	private async Task ParseLog(string path)
 	{
-		_ = 1;
 		try
 		{
 			using FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
@@ -145,7 +144,6 @@ public class GameDetector
 
 	private async Task FetchGameDetails(long placeId)
 	{
-		_ = 2;
 		try
 		{
 			string universeUrl = $"https://apis.roblox.com/universes/v1/places/{placeId}/universe";

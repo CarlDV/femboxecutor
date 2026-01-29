@@ -1,12 +1,12 @@
 # Femboxecutor
 
-Velocity Executor is a WPF-based application designed for script execution. This project uses .NET 8 and includes the Monaco Editor for code editing.
+Velocity Executor is a WPF-based application designed for script execution that uses VelocityAPI. This project uses .NET 8 and includes the Monaco Editor for code editing.
 
 ## Prerequisites
 
 Before building the project, ensure you have the following installed:
 
-- .NET 8.0 SDK
+- .NET 8.0 SDK and up
 - Windows Operating System (Required for WPF/Windows Forms support)
 
 ## Building the Project
@@ -31,7 +31,7 @@ To run the application directly from the terminal, use:
 - VelocityExecutor/ - Contains the main source code and XAML files.
 - VelocityExecutor/Images/ - Application assets and resources.
 - Monaco/ - The Monaco Editor web files.
-- VelocityAPI.dll - Core API library.
+- VelocityAPI.dll - Velocity API.
 
 ## Modifying the Project
 
@@ -47,7 +47,3 @@ The application logic is written in C#. Corresponding .cs files contain the code
 Use the dotnet add package command to include new NuGet packages.
 
    dotnet add package <PackageName>
-
-## License
-
-This project is for educational purposes.

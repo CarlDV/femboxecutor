@@ -12,9 +12,11 @@ Publish/
 *.pdb
 *.cache
 debug_*.log
+debug_*.txt
 crash.log
 pending_update.txt
 
 # Release packages
 Release-*.zip
+Release.zip
 Release/

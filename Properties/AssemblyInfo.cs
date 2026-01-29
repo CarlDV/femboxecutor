@@ -1,0 +1,20 @@
+using System.Diagnostics;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Windows.Resources;
+
+[assembly: AssemblyAssociatedContentFile("monaco/index.html")]
+[assembly: AssemblyAssociatedContentFile("monaco/index.html.bak")]
+[assembly: AssemblyAssociatedContentFile("audio/startup.mp3")]
+[assembly: AssemblyAssociatedContentFile("audio/the%20most%20insane%20audio%20you%20will%20hear.wav")]
+[assembly: AssemblyAssociatedContentFile("images/app_icon.png")]
+[assembly: AssemblyAssociatedContentFile("images/background.png")]
+[assembly: AssemblyAssociatedContentFile("images/icon_add.png")]
+[assembly: AssemblyAssociatedContentFile("images/icon_clear.png")]
+[assembly: AssemblyAssociatedContentFile("images/icon_delete.png")]
+[assembly: AssemblyAssociatedContentFile("images/icon_execute.png")]
+[assembly: AssemblyAssociatedContentFile("images/icon_inject.png")]
+[assembly: AssemblyAssociatedContentFile("images/icon_open.png")]
+[assembly: AssemblyAssociatedContentFile("images/icon_save.png")]
+[assembly: AssemblyAssociatedContentFile("webview2loader.dll")]
+[assembly: AssemblyVersion("0.0.0.0")]

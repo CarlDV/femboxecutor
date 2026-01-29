@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: transparent;
+        }
+
+        #container {
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .monaco-editor,
+        .monaco-editor-background,
+        .monaco-editor .inputarea.ime-input {
+            background-color: transparent !important;
+        }
+
+        .monaco-editor .margin {
+            background-color: transparent !important;
+        }
+
+        .monaco-editor .minimap {
+            background-color: transparent !important;
+        }
+
+        /* Ultra-smooth scrollbar */
+        .monaco-editor .scrollbar .slider {
+            transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1) !important;
+        }
+
+        /* Ultra-smooth cursor with glow */
+        .monaco-editor .cursor {
+            transition: all 0.1s cubic-bezier(0.23, 1, 0.32, 1) !important;
+            box-shadow: 0 0 8px rgba(174, 175, 173, 0.5);
+        }
+
+        /* Smooth selection */
+        .monaco-editor .selected-text {
+            transition: all 0.15s ease-out !important;
+        }
+
+        /* Smooth line highlighting */
+        .monaco-editor .current-line {
+            transition: background-color 0.15s ease-out !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container"></div>
+    <script src="https://unpkg.com/monaco-editor@latest/min/vs/loader.js"></script>
+    <script>
+        require.config({ paths: { 'vs': 'https://unpkg.com/monaco-editor@latest/min/vs' } });
+        require(['vs/editor/editor.main'], function () {
+            // Define an even better vibrant dark theme
+            monaco.editor.defineTheme('fembox-pro', {
+                base: 'vs-dark',
+                inherit: true,
+                rules: [
+                    { token: 'comment', foreground: '6A9955', fontStyle: 'italic' },
+                    { token: 'keyword', foreground: 'C586C0', fontStyle: 'bold' },
+                    { token: 'string', foreground: 'CE9178' },
+                    { token: 'number', foreground: 'B5CEA8' },
+                    { token: 'function', foreground: 'DCDCAA', fontStyle: 'bold' },
+                    { token: 'variable', foreground: '9CDCFE' },
+                    { token: 'type', foreground: '4EC9B0' },
+                    { token: 'class', foreground: '4EC9B0', fontStyle: 'bold' },
+                    { token: 'operator', foreground: 'D4D4D4' }
+                ],
+                colors: {
+                    'editor.background': '#00000000',
+                    'editor.foreground': '#D4D4D4',
+                    'editor.lineHighlightBackground': '#2A2A2A50',
+                    'editor.lineHighlightBorder': '#00000000',
+                    'editor.selectionBackground': '#264F7860',
+                    'editor.selectionHighlightBackground': '#264F7840',
+                    'editor.inactiveSelectionBackground': '#3A3D4120',
+                    'editor.wordHighlightBackground': '#575757B0',
+                    'editor.wordHighlightStrongBackground': '#004972B0',
+                    'editor.findMatchBackground': '#515C6A80',
+                    'editor.findMatchHighlightBackground': '#EA5C0055',
+                    'editor.rangeHighlightBackground': '#FFFFFF0B',
+                    'editorCursor.foreground': '#AEAFAD',
+                    'editorWhitespace.foreground': '#404040',
+                    'editorIndentGuide.background': '#404040',
+                    'editorIndentGuide.activeBackground': '#707070',
+                    'editorBracketMatch.background': '#0064001A',
+                    'editorBracketMatch.border': '#888888',
+                    'minimap.background': '#00000000',
+                    'scrollbar.shadow': '#00000080',
+                    'scrollbarSlider.background': '#79797960',
+                    'scrollbarSlider.hoverBackground': '#646464B0',
+                    'scrollbarSlider.activeBackground': '#BFBFBFC0',
+                    'editorSuggestWidget.background': '#252526',
+                    'editorSuggestWidget.border': '#454545',
+                    'editorSuggestWidget.selectedBackground': '#04395E',
+                    'editorHoverWidget.background': '#252526',
+                    'editorHoverWidget.border': '#454545'
+                }
+            });
+
+            var editor = monaco.editor.create(document.getElementById('container'), {
+                value: "-- Welcome to fembox! :3\nprint('Hello World! :3')",
+                language: 'lua',
+                theme: 'fembox-pro',
+                automaticLayout: true,
+
+                // Enhanced font settings
+                fontSize: 14,
+                fontFamily: "'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Consolas', 'Courier New', monospace",
+                fontLigatures: true,
+                lineHeight: 22,
+                letterSpacing: 0.5,
+                fontWeight: '400',
+
+                // Minimap with enhanced settings
+                minimap: {
+                    enabled: true,
+                    renderCharacters: false,
+                    maxColumn: 80,
+                    scale: 1,
+                    showSlider: 'mouseover'
+                },
+
+                // Ultra-smooth scrolling
+                smoothScrolling: true,
+                cursorSmoothCaretAnimation: 'on',
+                cursorBlinking: 'smooth',
+                mouseWheelScrollSensitivity: 1.2,
+                fastScrollSensitivity: 5,
+
+                // Better editing features
+                quickSuggestions: {
+                    other: true,
+                    comments: false,
+                    strings: true
+                },
+                suggestOnTriggerCharacters: true,
+                acceptSuggestionOnEnter: 'on',
+                tabCompletion: 'on',
+                wordBasedSuggestions: 'matchingDocuments',
+                parameterHints: {
+                    enabled: true
+                },
+
+                // Code intelligence
+                folding: true,
+                foldingStrategy: 'indentation',
+                showFoldingControls: 'mouseover',
+                foldingHighlight: true,
+                unfoldOnClickAfterEndOfLine: true,
+
+                // Formatting
+                formatOnPaste: true,
+                formatOnType: true,
+                autoIndent: 'full',
+
+                // Visual enhancements
+                renderLineHighlight: 'all',
+                renderLineHighlightOnlyWhenFocus: false,
+                renderWhitespace: 'selection',
+                renderControlCharacters: false,
+                renderIndentGuides: true,
+                highlightActiveIndentGuide: true,
+                bracketPairColorization: {
+                    enabled: true,
+                    independentColorPoolPerBracketType: true
+                },
+                guides: {
+                    indentation: true,
+                    bracketPairs: true,
+                    bracketPairsHorizontal: 'active'
+                },
+
+                // Find widget
+                find: {
+                    seedSearchStringFromSelection: 'selection',
+                    autoFindInSelection: 'multiline'
+                },
+
+                // Performance optimizations
+                scrollBeyondLastLine: false,
+                renderValidationDecorations: 'on',
+                suggest: {
+                    filterGraceful: true,
+                    localityBonus: true,
+                    shareSuggestSelections: true,
+                    showIcons: true,
+                    maxVisibleSuggestions: 12
+                },
+
+                // Scrollbars with smooth behavior
+                scrollbar: {
+                    vertical: 'auto',
+                    horizontal: 'auto',
+                    useShadows: true,
+                    verticalHasArrows: false,
+                    horizontalHasArrows: false,
+                    verticalScrollbarSize: 12,
+                    horizontalScrollbarSize: 12,
+                    arrowSize: 11,
+                    handleMouseWheel: true,
+                    alwaysConsumeMouseWheel: false
+                },
+
+                // Additional polish
+                padding: { top: 10, bottom: 10 },
+                lineNumbers: 'on',
+                lineNumbersMinChars: 3,
+                glyphMargin: false,
+                fixedOverflowWidgets: true,
+                overviewRulerLanes: 2,
+                overviewRulerBorder: false,
+                hideCursorInOverviewRuler: true,
+                contextmenu: true,
+                mouseWheelZoom: false,
+                links: true,
+                colorDecorators: true,
+                matchBrackets: 'always',
+                showDeprecated: true
+            });
+
+            // Add Roblox Lua intellisense
+            monaco.languages.registerCompletionItemProvider('lua', {
+                provideCompletionItems: function (model, position) {
+                    var word = model.getWordUntilPosition(position);
+                    var range = {
+                        startLineNumber: position.lineNumber,
+                        endLineNumber: position.lineNumber,
+                        startColumn: word.startColumn,
+                        endColumn: word.endColumn
+                    };
+
+                    var suggestions = [
+                        // ========== ROBLOX GLOBALS ==========
+                        { label: 'game', kind: 2, insertText: 'game', detail: 'DataModel', documentation: 'Root of the Roblox hierarchy' },
+                        { label: 'workspace', kind: 2, insertText: 'workspace', detail: 'Workspace', documentation: 'Alias for game.Workspace' },
+                        { label: 'script', kind: 2, insertText: 'script', detail: 'Script', documentation: 'Current script instance' },
+                        { label: 'shared', kind: 2, insertText: 'shared', detail: 'Shared Table', documentation: 'Table shared between all scripts' },
+                        { label: '_G', kind: 2, insertText: '_G', detail: 'Global Table', documentation: 'Global environment table' },
+                        { label: 'game:GetService', kind: 1, insertText: 'game:GetService("${1:ServiceName}")', insertTextRules: 4, detail: 'Get Service', documentation: 'Returns the specified service' },
+
+                        // ========== ALL ROBLOX SERVICES ==========
+                        { label: 'Players', kind: 7, insertText: 'game:GetService("Players")', detail: 'Players Service' },
+                        { label: 'Workspace', kind: 7, insertText: 'game:GetService("Workspace")', detail: 'Workspace Service' },
+                        { label: 'Lighting', kind: 7, insertText: 'game:GetService("Lighting")', detail: 'Lighting Service' },
+                        { label: 'ReplicatedStorage', kind: 7, insertText: 'game:GetService("ReplicatedStorage")', detail: 'ReplicatedStorage Service' },
+                        { label: 'ReplicatedFirst', kind: 7, insertText: 'game:GetService("ReplicatedFirst")', detail: 'ReplicatedFirst Service' },
+                        { label: 'ServerStorage', kind: 7, insertText: 'game:GetService("ServerStorage")', detail: 'ServerStorage Service' },
+                        { label: 'ServerScriptService', kind: 7, insertText: 'game:GetService("ServerScriptService")', detail: 'ServerScriptService' },
+                        { label: 'StarterGui', kind: 7, insertText: 'game:GetService("StarterGui")', detail: 'StarterGui Service' },
+                        { label: 'StarterPack', kind: 7, insertText: 'game:GetService("StarterPack")', detail: 'StarterPack Service' },
+                        { label: 'StarterPlayer', kind: 7, insertText: 'game:GetService("StarterPlayer")', detail: 'StarterPlayer Service' },
+                        { label: 'Teams', kind: 7, insertText: 'game:GetService("Teams")', detail: 'Teams Service' },
+                        { label: 'SoundService', kind: 7, insertText: 'game:GetService("SoundService")', detail: 'SoundService' },
+                        { label: 'Chat', kind: 7, insertText: 'game:GetService("Chat")', detail: 'Chat Service' },
+                        { label: 'LocalizationService', kind: 7, insertText: 'game:GetService("LocalizationService")', detail: 'LocalizationService' },
+                        { label: 'MarketplaceService', kind: 7, insertText: 'game:GetService("MarketplaceService")', detail: 'MarketplaceService' },
+                        { label: 'TeleportService', kind: 7, insertText: 'game:GetService("TeleportService")', detail: 'TeleportService' },
+                        { label: 'BadgeService', kind: 7, insertText: 'game:GetService("BadgeService")', detail: 'BadgeService' },
+                        { label: 'DataStoreService', kind: 7, insertText: 'game:GetService("DataStoreService")', detail: 'DataStoreService' },
+                        { label: 'HttpService', kind: 7, insertText: 'game:GetService("HttpService")', detail: 'HttpService' },
+                        { label: 'InsertService', kind: 7, insertText: 'game:GetService("InsertService")', detail: 'InsertService' },
+                        { label: 'CollectionService', kind: 7, insertText: 'game:GetService("CollectionService")', detail: 'CollectionService' },
+                        { label: 'ContextActionService', kind: 7, insertText: 'game:GetService("ContextActionService")', detail: 'ContextActionService' },
+                        { label: 'UserInputService', kind: 7, insertText: 'game:GetService("UserInputService")', detail: 'UserInputService' },
+                        { label: 'RunService', kind: 7, insertText: 'game:GetService("RunService")', detail: 'RunService' },
+                        { label: 'TweenService', kind: 7, insertText: 'game:GetService("TweenService")', detail: 'TweenService' },
+                        { label: 'PathfindingService', kind: 7, insertText: 'game:GetService("PathfindingService")', detail: 'PathfindingService' },
+                        { label: 'PhysicsService', kind: 7, insertText: 'game:GetService("PhysicsService")', detail: 'PhysicsService' },
+                        { label: 'Debris', kind: 7, insertText: 'game:GetService("Debris")', detail: 'Debris Service' },
+                        { label: 'TextService', kind: 7, insertText: 'game:GetService("TextService")', detail: 'TextService' },
+                        { label: 'GuiService', kind: 7, insertText: 'game:GetService("GuiService")', detail: 'GuiService' },
+
+                        // ========== INSTANCE METHODS ==========
+                        { label: 'FindFirstChild', kind: 1, insertText: 'FindFirstChild("${1:Name}")', insertTextRules: 4, detail: 'Find child by name' },
+                        { label: 'FindFirstChildOfClass', kind: 1, insertText: 'FindFirstChildOfClass("${1:ClassName}")', insertTextRules: 4, detail: 'Find child by class' },
+                        { label: 'FindFirstChildWhichIsA', kind: 1, insertText: 'FindFirstChildWhichIsA("${1:ClassName}")', insertTextRules: 4, detail: 'Find child inheriting class' },
+                        { label: 'FindFirstAncestor', kind: 1, insertText: 'FindFirstAncestor("${1:Name}")', insertTextRules: 4, detail: 'Find first ancestor by name' },
+                        { label: 'FindFirstAncestorOfClass', kind: 1, insertText: 'FindFirstAncestorOfClass("${1:ClassName}")', insertTextRules: 4, detail: 'Find ancestor by class' },
+                        { label: 'WaitForChild', kind: 1, insertText: 'WaitForChild("${1:Name}")', insertTextRules: 4, detail: 'Wait for child' },
+                        { label: 'GetChildren', kind: 1, insertText: 'GetChildren()', detail: 'Get all children' },
+                        { label: 'GetDescendants', kind: 1, insertText: 'GetDescendants()', detail: 'Get all descendants' },
+                        { label: 'GetFullName', kind: 1, insertText: 'GetFullName()', detail: 'Get full path name' },
+                        { label: 'IsAncestorOf', kind: 1, insertText: 'IsAncestorOf(${1:descendant})', insertTextRules: 4, detail: 'Check if ancestor' },
+                        { label: 'IsDescendantOf', kind: 1, insertText: 'IsDescendantOf(${1:ancestor})', insertTextRules: 4, detail: 'Check if descendant' },
+                        { label: 'Instance.new', kind: 3, insertText: 'Instance.new("${1:ClassName}")', insertTextRules: 4, detail: 'Create instance' },
+                        { label: 'Destroy', kind: 1, insertText: 'Destroy()', detail: 'Destroy instance' },
+                        { label: 'Clone', kind: 1, insertText: 'Clone()', detail: 'Clone instance' },
+                        { label: 'IsA', kind: 1, insertText: 'IsA("${1:ClassName}")', insertTextRules: 4, detail: 'Check class type' },
+                        { label: 'GetPropertyChangedSignal', kind: 1, insertText: 'GetPropertyChangedSignal("${1:Property}")', insertTextRules: 4, detail: 'Property change signal' },
+                        { label: 'GetAttribute', kind: 1, insertText: 'GetAttribute("${1:Name}")', insertTextRules: 4, detail: 'Get attribute value' },
+                        { label: 'SetAttribute', kind: 1, insertText: 'SetAttribute("${1:Name}", ${2:value})', insertTextRules: 4, detail: 'Set attribute value' },
+                        { label: 'GetAttributes', kind: 1, insertText: 'GetAttributes()', detail: 'Get all attributes' },
+                        { label: 'GetAttributeChangedSignal', kind: 1, insertText: 'GetAttributeChangedSignal("${1:Name}")', insertTextRules: 4, detail: 'Attribute change signal' },
+
+                        // ========== COMMON CLASSES ==========
+                        { label: 'Part', kind: 7, insertText: 'Instance.new("Part")', detail: 'Part - 3D Block' },
+                        { label: 'Model', kind: 7, insertText: 'Instance.new("Model")', detail: 'Model Container' },
+                        { label: 'Folder', kind: 7, insertText: 'Instance.new("Folder")', detail: 'Organization Folder' },
+                        { label: 'Script', kind: 7, insertText: 'Instance.new("Script")', detail: 'Server Script' },
+                        { label: 'LocalScript', kind: 7, insertText: 'Instance.new("LocalScript")', detail: 'Client Script' },
+                        { label: 'ModuleScript', kind: 7, insertText: 'Instance.new("ModuleScript")', detail: 'Module Script' },
+                        { label: 'Tool', kind: 7, insertText: 'Instance.new("Tool")', detail: 'Player Tool' },
+                        { label: 'Humanoid', kind: 7, insertText: 'Instance.new("Humanoid")', detail: 'Character Controller' },
+                        { label: 'ScreenGui', kind: 7, insertText: 'Instance.new("ScreenGui")', detail: 'Screen GUI Container' },
+                        { label: 'Frame', kind: 7, insertText: 'Instance.new("Frame")', detail: 'GUI Frame' },
+                        { label: 'TextLabel', kind: 7, insertText: 'Instance.new("TextLabel")', detail: 'Text Label' },
+                        { label: 'TextButton', kind: 7, insertText: 'Instance.new("TextButton")', detail: 'Text Button' },
+                        { label: 'ImageLabel', kind: 7, insertText: 'Instance.new("ImageLabel")', detail: 'Image Label' },
+                        { label: 'ImageButton', kind: 7, insertText: 'Instance.new("ImageButton")', detail: 'Image Button' },
+                        { label: 'RemoteEvent', kind: 7, insertText: 'Instance.new("RemoteEvent")', detail: 'Client-Server Event' },
+                        { label: 'RemoteFunction', kind: 7, insertText: 'Instance.new("RemoteFunction")', detail: 'Client-Server Function' },
+                        { label: 'BindableEvent', kind: 7, insertText: 'Instance.new("BindableEvent")', detail: 'Same-Side Event' },
+                        { label: 'BindableFunction', kind: 7, insertText: 'Instance.new("BindableFunction")', detail: 'Same-Side Function' },
+                        { label: 'Sound', kind: 7, insertText: 'Instance.new("Sound")', detail: 'Audio Sound' },
+                        { label: 'Fire', kind: 7, insertText: 'Instance.new("Fire")', detail: 'Fire Effect' },
+                        { label: 'Smoke', kind: 7, insertText: 'Instance.new("Smoke")', detail: 'Smoke Effect' },
+                        { label: 'ParticleEmitter', kind: 7, insertText: 'Instance.new("ParticleEmitter")', detail: 'Particle System' },
+                        { label: 'Beam', kind: 7, insertText: 'Instance.new("Beam")', detail: 'Beam Effect' },
+                        { label: 'Trail', kind: 7, insertText: 'Instance.new("Trail")', detail: 'Trail Effect' },
+                        { label: 'Attachment', kind: 7, insertText: 'Instance.new("Attachment")', detail: 'Attachment Point' },
+                        { label: 'Weld', kind: 7, insertText: 'Instance.new("Weld")', detail: 'Weld Constraint' },
+                        { label: 'Motor6D', kind: 7, insertText: 'Instance.new("Motor6D")', detail: 'Animated Joint' },
+                        { label: 'BodyVelocity', kind: 7, insertText: 'Instance.new("BodyVelocity")', detail: 'Body Velocity' },
+                        { label: 'BodyGyro', kind: 7, insertText: 'Instance.new("BodyGyro")', detail: 'Body Orientation' },
+
+                        // ========== DATATYPES ==========
+                        { label: 'Vector3.new', kind: 3, insertText: 'Vector3.new(${1:x}, ${2:y}, ${3:z})', insertTextRules: 4, detail: 'Create Vector3' },
+                        { label: 'Vector3.zero', kind: 10, insertText: 'Vector3.zero', detail: 'Vector3(0,0,0)' },
+                        { label: 'Vector3.one', kind: 10, insertText: 'Vector3.one', detail: 'Vector3(1,1,1)' },
+                        { label: 'Vector2.new', kind: 3, insertText: 'Vector2.new(${1:x}, ${2:y})', insertTextRules: 4, detail: 'Create Vector2' },
+                        { label: 'CFrame.new', kind: 3, insertText: 'CFrame.new(${1:x}, ${2:y}, ${3:z})', insertTextRules: 4, detail: 'Create CFrame' },
+                        { label: 'CFrame.Angles', kind: 3, insertText: 'CFrame.Angles(${1:rx}, ${2:ry}, ${3:rz})', insertTextRules: 4, detail: 'CFrame from angles' },
+                        { label: 'CFrame.fromEulerAnglesXYZ', kind: 3, insertText: 'CFrame.fromEulerAnglesXYZ(${1:rx}, ${2:ry}, ${3:rz})', insertTextRules: 4, detail: 'CFrame from Euler' },
+                        { label: 'CFrame.lookAt', kind: 3, insertText: 'CFrame.lookAt(${1:from}, ${2:to})', insertTextRules: 4, detail: 'Look at CFrame' },
+                        { label: 'Color3.new', kind: 3, insertText: 'Color3.new(${1:r}, ${2:g}, ${3:b})', insertTextRules: 4, detail: 'RGB Color (0-1)' },
+                        { label: 'Color3.fromRGB', kind: 3, insertText: 'Color3.fromRGB(${1:r}, ${2:g}, ${3:b})', insertTextRules: 4, detail: 'RGB Color (0-255)' },
+                        { label: 'Color3.fromHSV', kind: 3, insertText: 'Color3.fromHSV(${1:h}, ${2:s}, ${3:v})', insertTextRules: 4, detail: 'HSV Color' },
+                        { label: 'UDim2.new', kind: 3, insertText: 'UDim2.new(${1:xScale}, ${2:xOffset}, ${3:yScale}, ${4:yOffset})', insertTextRules: 4, detail: 'Create UDim2' },
+                        { label: 'UDim2.fromScale', kind: 3, insertText: 'UDim2.fromScale(${1:x}, ${2:y})', insertTextRules: 4, detail: 'UDim2 from scale' },
+                        { label: 'UDim2.fromOffset', kind: 3, insertText: 'UDim2.fromOffset(${1:x}, ${2:y})', insertTextRules: 4, detail: 'UDim2 from offset' },
+                        { label: 'NumberRange.new', kind: 3, insertText: 'NumberRange.new(${1:min}, ${2:max})', insertTextRules: 4, detail: 'Number Range' },
+                        { label: 'NumberSequence.new', kind: 3, insertText: 'NumberSequence.new(${1:value})', insertTextRules: 4, detail: 'Number Sequence' },
+                        { label: 'ColorSequence.new', kind: 3, insertText: 'ColorSequence.new(${1:color})', insertTextRules: 4, detail: 'Color Sequence' },
+                        { label: 'Ray.new', kind: 3, insertText: 'Ray.new(${1:Origin}, ${2:Direction})', insertTextRules: 4, detail: 'Create Ray' },
+                        { label: 'Random.new', kind: 3, insertText: 'Random.new(${1:seed})', insertTextRules: 4, detail: 'Random Generator' },
+                        { label: 'BrickColor.new', kind: 3, insertText: 'BrickColor.new("${1:ColorName}")', insertTextRules: 4, detail: 'Brick Color' },
+                        { label: 'BrickColor.random', kind: 3, insertText: 'BrickColor.random()', detail: 'Random Brick Color' },
+                        { label: 'TweenInfo.new', kind: 3, insertText: 'TweenInfo.new(${1:time}, ${2:EasingStyle}, ${3:EasingDirection})', insertTextRules: 4, detail: 'Tween Info' },
+                        { label: 'Region3.new', kind: 3, insertText: 'Region3.new(${1:min}, ${2:max})', insertTextRules: 4, detail: 'Region3 Volume' },
+
+                        // ========== ENUMS ==========
+                        { label: 'Enum.Material', kind: 13, insertText: 'Enum.Material.${1:Plastic}', insertTextRules: 4, detail: 'Part Material' },
+                        { label: 'Enum.FormFactor', kind: 13, insertText: 'Enum.FormFactor.${1:Symmetric}', insertTextRules: 4, detail: 'Form Factor' },
+                        { label: 'Enum.EasingStyle', kind: 13, insertText: 'Enum.EasingStyle.${1:Linear}', insertTextRules: 4, detail: 'Tween Easing Style' },
+                        { label: 'Enum.EasingDirection', kind: 13, insertText: 'Enum.EasingDirection.${1:In}', insertTextRules: 4, detail: 'Tween Direction' },
+                        { label: 'Enum.KeyCode', kind: 13, insertText: 'Enum.KeyCode.${1:Space}', insertTextRules: 4, detail: 'Keyboard Key' },
+                        { label: 'Enum.UserInputType', kind: 13, insertText: 'Enum.UserInputType.${1:Keyboard}', insertTextRules: 4, detail: 'Input Type' },
+                        { label: 'Enum.HumanoidStateType', kind: 13, insertText: 'Enum.HumanoidStateType.${1:Running}', insertTextRules: 4, detail: 'Humanoid State' },
+                        { label: 'Enum.PartType', kind: 13, insertText: 'Enum.PartType.${1:Block}', insertTextRules: 4, detail: 'Part Shape' },
+
+                        // ========== PLAYER & CHARACTER ==========
+                        { label: 'LocalPlayer', kind: 10, insertText: 'game:GetService("Players").LocalPlayer', detail: 'Local Player' },
+                        { label: 'Character', kind: 10, insertText: 'Character', detail: 'Player Character Model' },
+                        { label: 'CharacterAdded', kind: 1, insertText: 'CharacterAdded:Connect(function(character)\n\t${1}\nend)', insertTextRules: 4, detail: 'Character spawn event' },
+                        { label: 'PlayerAdded', kind: 1, insertText: 'PlayerAdded:Connect(function(player)\n\t${1}\nend)', insertTextRules: 4, detail: 'Player join event' },
+                        { label: 'PlayerRemoving', kind: 1, insertText: 'PlayerRemoving:Connect(function(player)\n\t${1}\nend)', insertTextRules: 4, detail: 'Player leave event' },
+                        { label: 'Died', kind: 1, insertText: 'Died:Connect(function()\n\t${1}\nend)', insertTextRules: 4, detail: 'Humanoid death event' },
+                        { label: 'HealthChanged', kind: 1, insertText: 'HealthChanged:Connect(function(health)\n\t${1}\nend)', insertTextRules: 4, detail: 'Health change event' },
+                        { label: 'GetPlayers', kind: 1, insertText: 'GetPlayers()', detail: 'Get all players' },
+                        { label: 'GetPlayerByUserId', kind: 1, insertText: 'GetPlayerByUserId(${1:userId})', insertTextRules: 4, detail: 'Get player by ID' },
+                        { label: 'GetPlayerFromCharacter', kind: 1, insertText: 'GetPlayerFromCharacter(${1:character})', insertTextRules: 4, detail: 'Get player from character' },
+                        { label: 'LoadCharacter', kind: 1, insertText: 'LoadCharacter()', detail: 'Respawn player' },
+                        { label: 'Kick', kind: 1, insertText: 'Kick("${1:Reason}")', insertTextRules: 4, detail: 'Kick player' },
+                        { label: 'WalkSpeed', kind: 10, insertText: 'WalkSpeed', detail: 'Humanoid walk speed' },
+                        { label: 'JumpPower', kind: 10, insertText: 'JumpPower', detail: 'Humanoid jump power' },
+                        { label: 'JumpHeight', kind: 10, insertText: 'JumpHeight', detail: 'Humanoid jump height' },
+                        { label: 'MaxHealth', kind: 10, insertText: 'MaxHealth', detail: 'Maximum health' },
+                        { label: 'Health', kind: 10, insertText: 'Health', detail: 'Current health' },
+
+                        // ========== EVENTS & SIGNALS ==========
+                        { label: 'Connect', kind: 1, insertText: 'Connect(function(${1:args})\n\t${2}\nend)', insertTextRules: 4, detail: 'Connect event' },
+                        { label: 'Wait', kind: 1, insertText: 'Wait()', detail: 'Wait for event' },
+                        { label: 'Disconnect', kind: 1, insertText: 'Disconnect()', detail: 'Disconnect connection' },
+                        { label: 'Once', kind: 1, insertText: 'Once(function(${1:args})\n\t${2}\nend)', insertTextRules: 4, detail: 'Connect once' },
+                        { label: 'Touched', kind: 1, insertText: 'Touched:Connect(function(hit)\n\t${1}\nend)', insertTextRules: 4, detail: 'Part touched event' },
+                        { label: 'TouchEnded', kind: 1, insertText: 'TouchEnded:Connect(function(hit)\n\t${1}\nend)', insertTextRules: 4, detail: 'Touch ended event' },
+                        { label: 'ChildAdded', kind: 1, insertText: 'ChildAdded:Connect(function(child)\n\t${1}\nend)', insertTextRules: 4, detail: 'Child added event' },
+                        { label: 'ChildRemoved', kind: 1, insertText: 'ChildRemoved:Connect(function(child)\n\t${1}\nend)', insertTextRules: 4, detail: 'Child removed event' },
+                        { label: 'DescendantAdded', kind: 1, insertText: 'DescendantAdded:Connect(function(descendant)\n\t${1}\nend)', insertTextRules: 4, detail: 'Descendant added' },
+                        { label: 'DescendantRemoving', kind: 1, insertText: 'DescendantRemoving:Connect(function(descendant)\n\t${1}\nend)', insertTextRules: 4, detail: 'Descendant removing' },
+                        { label: 'MouseClick', kind: 1, insertText: 'MouseClick:Connect(function()\n\t${1}\nend)', insertTextRules: 4, detail: 'GUI click event' },
+                        { label: 'Activated', kind: 1, insertText: 'Activated:Connect(function()\n\t${1}\nend)', insertTextRules: 4, detail: 'Tool activated' },
+                        { label: 'Equipped', kind: 1, insertText: 'Equipped:Connect(function()\n\t${1}\nend)', insertTextRules: 4, detail: 'Tool equipped' },
+                        { label: 'Unequipped', kind: 1, insertText: 'Unequipped:Connect(function()\n\t${1}\nend)', insertTextRules: 4, detail: 'Tool unequipped' },
+                        { label: 'AncestryChanged', kind: 1, insertText: 'AncestryChanged:Connect(function()\n\t${1}\nend)', insertTextRules: 4, detail: 'Ancestry changed' },
+                        { label: 'Changed', kind: 1, insertText: 'Changed:Connect(function(property)\n\t${1}\nend)', insertTextRules: 4, detail: 'Property changed' },
+
+                        // ========== REMOTE EVENTS ==========
+                        { label: 'FireServer', kind: 1, insertText: 'FireServer(${1:args})', insertTextRules: 4, detail: 'Fire to server' },
+                        { label: 'FireClient', kind: 1, insertText: 'FireClient(${1:player}, ${2:args})', insertTextRules: 4, detail: 'Fire to client' },
+                        { label: 'FireAllClients', kind: 1, insertText: 'FireAllClients(${1:args})', insertTextRules: 4, detail: 'Fire to all clients' },
+                        { label: 'InvokeServer', kind: 1, insertText: 'InvokeServer(${1:args})', insertTextRules: 4, detail: 'Invoke server function' },
+                        { label: 'InvokeClient', kind: 1, insertText: 'InvokeClient(${1:player}, ${2:args})', insertTextRules: 4, detail: 'Invoke client function' },
+                        { label: 'OnServerEvent', kind: 1, insertText: 'OnServerEvent:Connect(function(player, ${1:args})\n\t${2}\nend)', insertTextRules: 4, detail: 'Server event listener' },
+                        { label: 'OnClientEvent', kind: 1, insertText: 'OnClientEvent:Connect(function(${1:args})\n\t${2}\nend)', insertTextRules: 4, detail: 'Client event listener' },
+                        { label: 'OnServerInvoke', kind: 1, insertText: 'OnServerInvoke = function(player, ${1:args})\n\t${2}\nend', insertTextRules: 4, detail: 'Server function callback' },
+                        { label: 'OnClientInvoke', kind: 1, insertText: 'OnClientInvoke = function(${1:args})\n\t${2}\nend', insertTextRules: 4, detail: 'Client function callback' },
+
+                        // ========== TASK LIBRARY ==========
+                        { label: 'task.wait', kind: 3, insertText: 'task.wait(${1:seconds})', insertTextRules: 4, detail: 'Modern wait' },
+                        { label: 'task.spawn', kind: 3, insertText: 'task.spawn(function()\n\t${1}\nend)', insertTextRules: 4, detail: 'Spawn thread' },
+                        { label: 'task.delay', kind: 3, insertText: 'task.delay(${1:seconds}, function()\n\t${2}\nend)', insertTextRules: 4, detail: 'Delayed execution' },
+                        { label: 'task.defer', kind: 3, insertText: 'task.defer(function()\n\t${1}\nend)', insertTextRules: 4, detail: 'Defer execution' },
+                        { label: 'task.desynchronize', kind: 3, insertText: 'task.desynchronize()', detail: 'Desync thread' },
+                        { label: 'task.synchronize', kind: 3, insertText: 'task.synchronize()', detail: 'Sync thread' },
+                        { label: 'task.cancel', kind: 3, insertText: 'task.cancel(${1:thread})', insertTextRules: 4, detail: 'Cancel task' },
+
+                        // ========== MATH LIBRARY ==========
+                        { label: 'math.abs', kind: 3, insertText: 'math.abs(${1:x})', insertTextRules: 4, detail: 'Absolute value' },
+                        { label: 'math.ceil', kind: 3, insertText: 'math.ceil(${1:x})', insertTextRules: 4, detail: 'Round up' },
+                        { label: 'math.floor', kind: 3, insertText: 'math.floor(${1:x})', insertTextRules: 4, detail: 'Round down' },
+                        { label: 'math.max', kind: 3, insertText: 'math.max(${1:x}, ${2:y})', insertTextRules: 4, detail: 'Maximum value' },
+                        { label: 'math.min', kind: 3, insertText: 'math.min(${1:x}, ${2:y})', insertTextRules: 4, detail: 'Minimum value' },
+                        { label: 'math.random', kind: 3, insertText: 'math.random(${1:min}, ${2:max})', insertTextRules: 4, detail: 'Random number' },
+                        { label: 'math.rad', kind: 3, insertText: 'math.rad(${1:degrees})', insertTextRules: 4, detail: 'Degrees to radians' },
+                        { label: 'math.deg', kind: 3, insertText: 'math.deg(${1:radians})', insertTextRules: 4, detail: 'Radians to degrees' },
+                        { label: 'math.sin', kind: 3, insertText: 'math.sin(${1:x})', insertTextRules: 4, detail: 'Sine' },
+                        { label: 'math.cos', kind: 3, insertText: 'math.cos(${1:x})', insertTextRules: 4, detail: 'Cosine' },
+                        { label: 'math.tan', kind: 3, insertText: 'math.tan(${1:x})', insertTextRules: 4, detail: 'Tangent' },
+                        { label: 'math.sqrt', kind: 3, insertText: 'math.sqrt(${1:x})', insertTextRules: 4, detail: 'Square root' },
+                        { label: 'math.pow', kind: 3, insertText: 'math.pow(${1:x}, ${2:y})', insertTextRules: 4, detail: 'Power' },
+                        { label: 'math.pi', kind: 10, insertText: 'math.pi', detail: 'Pi constant' },
+                        { label: 'math.huge', kind: 10, insertText: 'math.huge', detail: 'Infinity' },
+                        { label: 'math.clamp', kind: 3, insertText: 'math.clamp(${1:x}, ${2:min}, ${3:max})', insertTextRules: 4, detail: 'Clamp value' },
+                        { label: 'math.sign', kind: 3, insertText: 'math.sign(${1:x})', insertTextRules: 4, detail: 'Sign of number' },
+                        { label: 'math.round', kind: 3, insertText: 'math.round(${1:x})', insertTextRules: 4, detail: 'Round number' },
+
+                        // ========== STRING LIBRARY ==========
+                        { label: 'string.upper', kind: 3, insertText: 'string.upper(${1:s})', insertTextRules: 4, detail: 'To uppercase' },
+                        { label: 'string.lower', kind: 3, insertText: 'string.lower(${1:s})', insertTextRules: 4, detail: 'To lowercase' },
+                        { label: 'string.len', kind: 3, insertText: 'string.len(${1:s})', insertTextRules: 4, detail: 'String length' },
+                        { label: 'string.sub', kind: 3, insertText: 'string.sub(${1:s}, ${2:i}, ${3:j})', insertTextRules: 4, detail: 'Substring' },
+                        { label: 'string.find', kind: 3, insertText: 'string.find(${1:s}, ${2:pattern})', insertTextRules: 4, detail: 'Find pattern' },
+                        { label: 'string.gsub', kind: 3, insertText: 'string.gsub(${1:s}, ${2:pattern}, ${3:repl})', insertTextRules: 4, detail: 'Substitute' },
+                        { label: 'string.match', kind: 3, insertText: 'string.match(${1:s}, ${2:pattern})', insertTextRules: 4, detail: 'Match pattern' },
+                        { label: 'string.gmatch', kind: 3, insertText: 'string.gmatch(${1:s}, ${2:pattern})', insertTextRules: 4, detail: 'Iterator matches' },
+                        { label: 'string.rep', kind: 3, insertText: 'string.rep(${1:s}, ${2:n})', insertTextRules: 4, detail: 'Repeat string' },
+                        { label: 'string.reverse', kind: 3, insertText: 'string.reverse(${1:s})', insertTextRules: 4, detail: 'Reverse string' },
+                        { label: 'string.format', kind: 3, insertText: 'string.format("${1:fmt}", ${2:args})', insertTextRules: 4, detail: 'Format string' },
+                        { label: 'string.split', kind: 3, insertText: 'string.split(${1:s}, "${2:sep}")', insertTextRules: 4, detail: 'Split string (Roblox)' },
+
+                        // ========== TABLE LIBRARY ==========
+                        { label: 'table.insert', kind: 3, insertText: 'table.insert(${1:t}, ${2:value})', insertTextRules: 4, detail: 'Insert into table' },
+                        { label: 'table.remove', kind: 3, insertText: 'table.remove(${1:t}, ${2:pos})', insertTextRules: 4, detail: 'Remove from table' },
+                        { label: 'table.sort', kind: 3, insertText: 'table.sort(${1:t})', insertTextRules: 4, detail: 'Sort table' },
+                        { label: 'table.concat', kind: 3, insertText: 'table.concat(${1:t}, "${2:sep}")', insertTextRules: 4, detail: 'Concatenate table' },
+                        { label: 'table.find', kind: 3, insertText: 'table.find(${1:t}, ${2:value})', insertTextRules: 4, detail: 'Find in table (Roblox)' },
+                        { label: 'table.clear', kind: 3, insertText: 'table.clear(${1:t})', insertTextRules: 4, detail: 'Clear table (Roblox)' },
+                        { label: 'table.create', kind: 3, insertText: 'table.create(${1:count}, ${2:value})', insertTextRules: 4, detail: 'Create table (Roblox)' },
+                        { label: 'table.move', kind: 3, insertText: 'table.move(${1:a1}, ${2:f}, ${3:e}, ${4:t}, ${5:a2})', insertTextRules: 4, detail: 'Move elements' },
+                        { label: 'table.pack', kind: 3, insertText: 'table.pack(${1:...})', insertTextRules: 4, detail: 'Pack arguments' },
+                        { label: 'table.unpack', kind: 3, insertText: 'table.unpack(${1:t})', insertTextRules: 4, detail: 'Unpack table' },
+
+                        // ========== COROUTINE ==========
+                        { label: 'coroutine.create', kind: 3, insertText: 'coroutine.create(function()\n\t${1}\nend)', insertTextRules: 4, detail: 'Create coroutine' },
+                        { label: 'coroutine.resume', kind: 3, insertText: 'coroutine.resume(${1:co})', insertTextRules: 4, detail: 'Resume coroutine' },
+                        { label: 'coroutine.yield', kind: 3, insertText: 'coroutine.yield(${1:args})', insertTextRules: 4, detail: 'Yield coroutine' },
+                        { label: 'coroutine.wrap', kind: 3, insertText: 'coroutine.wrap(function()\n\t${1}\nend)', insertTextRules: 4, detail: 'Wrap coroutine' },
+                        { label: 'coroutine.status', kind: 3, insertText: 'coroutine.status(${1:co})', insertTextRules: 4, detail: 'Coroutine status' },
+                        { label: 'coroutine.running', kind: 3, insertText: 'coroutine.running()', detail: 'Current coroutine' },
+
+                        // ========== STANDARD FUNCTIONS ==========
+                        { label: 'print', kind: 3, insertText: 'print(${1:text})', insertTextRules: 4, detail: 'Print to output' },
+                        { label: 'warn', kind: 3, insertText: 'warn(${1:text})', insertTextRules: 4, detail: 'Print warning' },
+                        { label: 'error', kind: 3, insertText: 'error("${1:message}")', insertTextRules: 4, detail: 'Throw error' },
+                        { label: 'assert', kind: 3, insertText: 'assert(${1:condition}, "${2:message}")', insertTextRules: 4, detail: 'Assert condition' },
+                        { label: 'type', kind: 3, insertText: 'type(${1:value})', insertTextRules: 4, detail: 'Get type' },
+                        { label: 'typeof', kind: 3, insertText: 'typeof(${1:value})', insertTextRules: 4, detail: 'Get Roblox type' },
+                        { label: 'tonumber', kind: 3, insertText: 'tonumber(${1:value})', insertTextRules: 4, detail: 'Convert to number' },
+                        { label: 'tostring', kind: 3, insertText: 'tostring(${1:value})', insertTextRules: 4, detail: 'Convert to string' },
+                        { label: 'pcall', kind: 3, insertText: 'pcall(function()\n\t${1}\nend)', insertTextRules: 4, detail: 'Protected call' },
+                        { label: 'xpcall', kind: 3, insertText: 'xpcall(function()\n\t${1}\nend, function(err)\n\t${2}\nend)', insertTextRules: 4, detail: 'Extended pcall' },
+                        { label: 'select', kind: 3, insertText: 'select(${1:index}, ${2:...})', insertTextRules: 4, detail: 'Select from args' },
+                        { label: 'next', kind: 3, insertText: 'next(${1:table}, ${2:index})', insertTextRules: 4, detail: 'Next table entry' },
+                        { label: 'pairs', kind: 3, insertText: 'pairs(${1:table})', insertTextRules: 4, detail: 'Iterate all entries' },
+                        { label: 'ipairs', kind: 3, insertText: 'ipairs(${1:array})', insertTextRules: 4, detail: 'Iterate array' },
+                        { label: 'getmetatable', kind: 3, insertText: 'getmetatable(${1:object})', insertTextRules: 4, detail: 'Get metatable' },
+                        { label: 'setmetatable', kind: 3, insertText: 'setmetatable(${1:table}, ${2:metatable})', insertTextRules: 4, detail: 'Set metatable' },
+                        { label: 'rawget', kind: 3, insertText: 'rawget(${1:table}, ${2:key})', insertTextRules: 4, detail: 'Raw table get' },
+                        { label: 'rawset', kind: 3, insertText: 'rawset(${1:table}, ${2:key}, ${3:value})', insertTextRules: 4, detail: 'Raw table set' },
+                        { label: 'rawequal', kind: 3, insertText: 'rawequal(${1:v1}, ${2:v2})', insertTextRules: 4, detail: 'Raw equality' },
+                        { label: 'wait', kind: 3, insertText: 'wait(${1:seconds})', insertTextRules: 4, detail: 'Wait (deprecated)' },
+                        { label: 'spawn', kind: 3, insertText: 'spawn(function()\n\t${1}\nend)', insertTextRules: 4, detail: 'Spawn (deprecated)' },
+                        { label: 'delay', kind: 3, insertText: 'delay(${1:seconds}, function()\n\t${2}\nend)', insertTextRules: 4, detail: 'Delay (deprecated)' },
+
+                        // ========== LUA SNIPPETS ==========
+                        { label: 'function', kind: 15, insertText: 'function ${1:name}(${2:args})\n\t${3}\nend', insertTextRules: 4, detail: 'Function' },
+                        { label: 'local function', kind: 15, insertText: 'local function ${1:name}(${2:args})\n\t${3}\nend', insertTextRules: 4, detail: 'Local function' },
+                        { label: 'for i', kind: 15, insertText: 'for ${1:i} = ${2:1}, ${3:10} do\n\t${4}\nend', insertTextRules: 4, detail: 'Numeric for' },
+                        { label: 'for pairs', kind: 15, insertText: 'for ${1:k}, ${2:v} in pairs(${3:table}) do\n\t${4}\nend', insertTextRules: 4, detail: 'For pairs' },
+                        { label: 'for ipairs', kind: 15, insertText: 'for ${1:i}, ${2:v} in ipairs(${3:array}) do\n\t${4}\nend', insertTextRules: 4, detail: 'For ipairs' },
+                        { label: 'if', kind: 15, insertText: 'if ${1:condition} then\n\t${2}\nend', insertTextRules: 4, detail: 'If statement' },
+                        { label: 'if-else', kind: 15, insertText: 'if ${1:condition} then\n\t${2}\nelse\n\t${3}\nend', insertTextRules: 4, detail: 'If-else' },
+                        { label: 'if-elseif-else', kind: 15, insertText: 'if ${1:cond1} then\n\t${2}\nelseif ${3:cond2} then\n\t${4}\nelse\n\t${5}\nend', insertTextRules: 4, detail: 'If-elseif-else' },
+                        { label: 'while', kind: 15, insertText: 'while ${1:condition} do\n\t${2}\nend', insertTextRules: 4, detail: 'While loop' },
+                        { label: 'repeat', kind: 15, insertText: 'repeat\n\t${1}\nuntil ${2:condition}', insertTextRules: 4, detail: 'Repeat-until' },
+                        { label: 'local', kind: 14, insertText: 'local ${1:var} = ${2:value}', insertTextRules: 4, detail: 'Local variable' },
+                        { label: 'return', kind: 14, insertText: 'return ${1:value}', insertTextRules: 4, detail: 'Return statement' },
+                        { label: 'break', kind: 14, insertText: 'break', detail: 'Break loop' },
+                        { label: 'continue', kind: 14, insertText: 'continue', detail: 'Continue loop' },
+                        { label: 'then', kind: 14, insertText: 'then', detail: 'Then keyword' },
+                        { label: 'else', kind: 14, insertText: 'else', detail: 'Else keyword' },
+                        { label: 'elseif', kind: 14, insertText: 'elseif ${1:condition} then', insertTextRules: 4, detail: 'Elseif branch' },
+                        { label: 'do', kind: 14, insertText: 'do', detail: 'Do keyword' },
+                        { label: 'end', kind: 14, insertText: 'end', detail: 'End keyword' },
+                        { label: 'true', kind: 14, insertText: 'true', detail: 'Boolean true' },
+                        { label: 'false', kind: 14, insertText: 'false', detail: 'Boolean false' },
+                        { label: 'nil', kind: 14, insertText: 'nil', detail: 'Nil value' },
+                        { label: 'and', kind: 4, insertText: 'and', detail: 'Logical and' },
+                        { label: 'or', kind: 4, insertText: 'or', detail: 'Logical or' },
+                        { label: 'not', kind: 4, insertText: 'not', detail: 'Logical not' }
+                    ];
+
+                    return { suggestions: suggestions.map(s => Object.assign(s, { range: range })) };
+                    { label: 'game', kind: 2, insertText: 'game', detail: 'DataModel - Root of Roblox hierarchy', documentation: 'The root Instance of the Roblox game hierarchy' },
+                    { label: 'workspace', kind: 2, insertText: 'workspace', detail: 'Workspace Service', documentation: 'Contains all physical parts in the 3D world' },
+                    { label: 'script', kind: 2, insertText: 'script', detail: 'Current Script', documentation: 'Reference to the current script object' },
+                    { label: 'game:GetService', kind: 1, insertText: 'game:GetService("${1:ServiceName}")', insertTextRules: 4, detail: 'Get Service', documentation: 'Returns the specified service' },
+
+                    // COMMON SERVICES
+                    { label: 'Players', kind: 7, insertText: 'game:GetService("Players")', detail: 'Players Service', documentation: 'Manages player connections and data' },
+                    { label: 'ReplicatedStorage', kind: 7, insertText: 'game:GetService("ReplicatedStorage")', detail: 'ReplicatedStorage Service', documentation: 'Replicated storage accessible by client and server' },
+                    { label: 'ServerStorage', kind: 7, insertText: 'game:GetService("ServerStorage")', detail: 'ServerStorage Service', documentation: 'Storage only accessible by server' },
+                    { label: 'UserInputService', kind: 7, insertText: 'game:GetService("UserInputService")', detail: 'UserInputService', documentation: 'Handles user input events' },
+                    { label: 'RunService', kind: 7, insertText: 'game:GetService("RunService")', detail: 'RunService', documentation: 'Manages game loop events' },
+                    { label: 'TweenService', kind: 7, insertText: 'game:GetService("TweenService")', detail: 'TweenService', documentation: 'Create smooth animations/tweens' },
+                    { label: 'HttpService', kind: 7, insertText: 'game:GetService("HttpService")', detail: 'HttpService', documentation: 'Make HTTP requests and JSON operations' },
+                    { label: 'Lighting', kind: 7, insertText: 'game:GetService("Lighting")', detail: 'Lighting Service', documentation: 'Controls game lighting and atmosphere' },
+
+                    // INSTANCE METHODS
+                    { label: 'FindFirstChild', kind: 1, insertText: 'FindFirstChild("${1:Name}")', insertTextRules: 4, detail: 'Find first child by name', documentation: 'Returns the first child with the specified name' },
+                    { label: 'WaitForChild', kind: 1, insertText: 'WaitForChild("${1:Name}")', insertTextRules: 4, detail: 'Wait for child', documentation: 'Yields until child exists or timeout' },
+                    { label: 'FindFirstChildOfClass', kind: 1, insertText: 'FindFirstChildOfClass("${1:ClassName}")', insertTextRules: 4, detail: 'Find child by class', documentation: 'Returns first child of specified class' },
+                    { label: 'GetChildren', kind: 1, insertText: 'GetChildren()', detail: 'Get all children', documentation: 'Returns array of all children' },
+                    { label: 'GetDescendants', kind: 1, insertText: 'GetDescendants()', detail: 'Get all descendants', documentation: 'Returns array of all descendants recursively' },
+                    { label: 'Instance.new', kind: 3, insertText: 'Instance.new("${1:ClassName}")', insertTextRules: 4, detail: 'Create instance', documentation: 'Creates a new instance of the specified class' },
+                    { label: 'Destroy', kind: 1, insertText: 'Destroy()', detail: 'Destroy instance', documentation: 'Removes instance and all descendants from game' },
+                    { label: 'Clone', kind: 1, insertText: 'Clone()', detail: 'Clone instance', documentation: 'Creates a copy of the instance and its descendants' },
+                    { label: 'IsA', kind: 1, insertText: 'IsA("${1:ClassName}")', insertTextRules: 4, detail: 'Check instance class', documentation: 'Returns true if instance is of specified class' },
+                    { label: 'GetPropertyChangedSignal', kind: 1, insertText: 'GetPropertyChangedSignal("${1:PropertyName}")', insertTextRules: 4, detail: 'Property change event', documentation: 'Returns an event that fires when property changes' },
+
+                    // PLAYER STUFF
+                    { label: 'LocalPlayer', kind: 10, insertText: 'game:GetService("Players").LocalPlayer', detail: 'Local Player', documentation: 'The client player object' },
+                    { label: 'Character', kind: 10, insertText: 'Character', detail: 'Player Character', documentation: 'The player character model' },
+                    { label: 'Humanoid', kind: 7, insertText: 'Character:FindFirstChild("Humanoid")', detail: 'Humanoid', documentation: 'The character humanoid object' },
+                    { label: 'CharacterAdded', kind: 1, insertText: 'CharacterAdded:Connect(function(character)\n\t${1}\nend)', insertTextRules: 4, detail: 'Character added event', documentation: 'Fires when player character is added' },
+                    { label: 'Died', kind: 1, insertText: 'Died:Connect(function()\n\t${1}\nend)', insertTextRules: 4, detail: 'Humanoid died event', documentation: 'Fires when humanoid dies' },
+
+                    // EVENTS
+                    { label: 'Connect', kind: 1, insertText: 'Connect(function(${1:args})\n\t${2}\nend)', insertTextRules: 4, detail: 'Connect to event', documentation: 'Connects a function to an event' },
+                    { label: 'Wait', kind: 1, insertText: 'Wait()', detail: 'Wait for event', documentation: 'Yields until event fires, returns event arguments' },
+                    { label: 'Disconnect', kind: 1, insertText: 'Disconnect()', detail: 'Disconnect event', documentation: 'Disconnects event connection' },
+
+                    // TASK LIBRARY (Modern Roblox)
+                    { label: 'task.wait', kind: 3, insertText: 'task.wait(${1:seconds})', insertTextRules: 4, detail: 'Task wait', documentation: 'Yields for specified duration (preferred over wait())' },
+                    { label: 'task.spawn', kind: 3, insertText: 'task.spawn(function()\n\t${1}\nend)', insertTextRules: 4, detail: 'Spawn task', documentation: 'Runs function in a new thread immediately' },
+                    { label: 'task.delay', kind: 3, insertText: 'task.delay(${1:seconds}, function()\n\t${2}\nend)', insertTextRules: 4, detail: 'Delayed task', documentation: 'Runs function after specified delay' },
+                    { label: 'task.defer', kind: 3, insertText: 'task.defer(function()\n\t${1}\nend)', insertTextRules: 4, detail: 'Deferred task', documentation: 'Defers function to next resume point' },
+
+                    // COMMON FUNCTIONS
+                    { label: 'print', kind: 3, insertText: 'print(${1:text})', insertTextRules: 4, detail: 'Print', documentation: 'Prints to output console' },
+                    { label: 'warn', kind: 3, insertText: 'warn(${1:text})', insertTextRules: 4, detail: 'Warn', documentation: 'Prints warning to output console' },
+                    { label: 'error', kind: 3, insertText: 'error("${1:message}")', insertTextRules: 4, detail: 'Error', documentation: 'Throws an error with message' },
+                    { label: 'wait', kind: 3, insertText: 'wait(${1:seconds})', insertTextRules: 4, detail: 'Wait (deprecated)', documentation: 'Yields for duration. Use task.wait() instead' },
+                    { label: 'spawn', kind: 3, insertText: 'spawn(function()\n\t${1}\nend)', insertTextRules: 4, detail: 'Spawn (deprecated)', documentation: 'Spawns new thread. Use task.spawn() instead' },
+
+                    // LUA SNIPPETS
+                    { label: 'function', kind: 15, insertText: 'function ${1:name}(${2:args})\n\t${3}\nend', insertTextRules: 4, detail: 'Function declaration' },
+                    { label: 'local function', kind: 15, insertText: 'local function ${1:name}(${2:args})\n\t${3}\nend', insertTextRules: 4, detail: 'Local function' },
+                    { label: 'for i', kind: 15, insertText: 'for ${1:i} = ${2:1}, ${3:10} do\n\t${4}\nend', insertTextRules: 4, detail: 'Numeric for loop' },
+                    { label: 'for pairs', kind: 15, insertText: 'for ${1:key}, ${2:value} in pairs(${3:table}) do\n\t${4}\nend', insertTextRules: 4, detail: 'For pairs loop' },
+                    { label: 'for ipairs', kind: 15, insertText: 'for ${1:index}, ${2:value} in ipairs(${3:array}) do\n\t${4}\nend', insertTextRules: 4, detail: 'For ipairs loop' },
+                    { label: 'if', kind: 15, insertText: 'if ${1:condition} then\n\t${2}\nend', insertTextRules: 4, detail: 'If statement' },
+                    { label: 'if-else', kind: 15, insertText: 'if ${1:condition} then\n\t${2}\nelse\n\t${3}\nend', insertTextRules: 4, detail: 'If-else statement' },
+                    { label: 'if-elseif', kind: 15, insertText: 'if ${1:condition1} then\n\t${2}\nelseif ${3:condition2} then\n\t${4}\nelse\n\t${5}\nend', insertTextRules: 4, detail: 'If-elseif-else' },
+                    { label: 'while', kind: 15, insertText: 'while ${1:condition} do\n\t${2}\nend', insertTextRules: 4, detail: 'While loop' },
+                    { label: 'repeat', kind: 15, insertText: 'repeat\n\t${1}\nuntil ${2:condition}', insertTextRules: 4, detail: 'Repeat-until loop' },
+                    { label: 'local', kind: 14, insertText: 'local ${1:var} = ${2:value}', insertTextRules: 4, detail: 'Local variable' }
+                    ];
+
+                    return { suggestions: suggestions.map(s => Object.assign(s, { range: range })) };
+                }
+            });
+
+            // Expose to C#
+            window.GetContent = function () {
+                return editor.getValue();
+            };
+
+            window.SetContent = function (content) {
+                editor.setValue(content);
+            };
+
+            editor.onDidChangeModelContent(function (e) {
+                if (window.chrome && window.chrome.webview) {
+                    window.chrome.webview.postMessage({ type: 'textChanged', content: editor.getValue() });
+                }
+            });
+
+            // Add keyboard shortcuts
+            editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, function () {
+                // Trigger save via message
+                if (window.chrome && window.chrome.webview) {
+                    window.chrome.webview.postMessage({ type: 'save' });
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

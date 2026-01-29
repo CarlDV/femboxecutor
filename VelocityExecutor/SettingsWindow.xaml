@@ -1,0 +1,358 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Window x:Class="VelocityExecutor.SettingsWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:behaviors="clr-namespace:VelocityExecutor.Behaviors" Title="Settings" Height="500" Width="340" WindowStyle="None" AllowsTransparency="True" Background="#00FFFFFF" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" UseLayoutRounding="True" SnapsToDevicePixels="True" TextOptions.TextFormattingMode="Display" RenderOptions.BitmapScalingMode="HighQuality" xmlns:velocityexecutor="clr-namespace:VelocityExecutor">
+  <WindowChrome.WindowChrome>
+    <WindowChrome CaptionHeight="50" ResizeBorderThickness="0" GlassFrameThickness="0" CornerRadius="0" />
+  </WindowChrome.WindowChrome>
+  <FrameworkElement.Resources>
+    <ResourceDictionary>
+      <FontFamily x:Key="MonacoFont">Cascadia Code, Fira Code, JetBrains Mono, Consolas, Courier New, monospace</FontFamily>
+      <Style x:Key="SettingsScrollBar" TargetType="{x:Type ScrollBar}">
+        <Setter Property="Background" Value="#00FFFFFF" />
+        <Setter Property="Width" Value="8" />
+        <Setter Property="Template">
+          <Setter.Value>
+            <ControlTemplate TargetType="{x:Type ScrollBar}">
+              <Grid Width="8" Background="{TemplateBinding Control.Background}">
+                <Track Name="PART_Track" IsDirectionReversed="true" Focusable="false">
+                  <Track.Thumb>
+                    <Thumb>
+                      <Control.Template>
+                        <ControlTemplate TargetType="{x:Type Thumb}">
+                          <Border Name="ThumbBorder" CornerRadius="4" Background="{DynamicResource AccentColor}" Margin="2" Opacity="0.5" RenderTransformOrigin="0.5,0.5">
+                            <UIElement.RenderTransform>
+                              <ScaleTransform x:Name="thumbScale" ScaleX="1" ScaleY="1" />
+                            </UIElement.RenderTransform>
+                          </Border>
+                          <ControlTemplate.Triggers>
+                            <Trigger Property="UIElement.IsMouseOver" Value="True">
+                              <TriggerBase.EnterActions>
+                                <BeginStoryboard>
+                                  <Storyboard>
+                                    <DoubleAnimation Storyboard.TargetName="ThumbBorder" Storyboard.TargetProperty="Opacity" To="0.8" Duration="0:0:0.2" />
+                                    <DoubleAnimation Storyboard.TargetName="thumbScale" Storyboard.TargetProperty="ScaleX" To="1.3" Duration="0:0:0.2" />
+                                  </Storyboard>
+                                </BeginStoryboard>
+                              </TriggerBase.EnterActions>
+                              <TriggerBase.ExitActions>
+                                <BeginStoryboard>
+                                  <Storyboard>
+                                    <DoubleAnimation Storyboard.TargetName="ThumbBorder" Storyboard.TargetProperty="Opacity" To="0.5" Duration="0:0:0.2" />
+                                    <DoubleAnimation Storyboard.TargetName="thumbScale" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.2" />
+                                  </Storyboard>
+                                </BeginStoryboard>
+                              </TriggerBase.ExitActions>
+                            </Trigger>
+                          </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                      </Control.Template>
+                    </Thumb>
+                  </Track.Thumb>
+                  <Track.IncreaseRepeatButton>
+                    <RepeatButton Command="ScrollBar.PageDownCommand" Opacity="0" Focusable="false" />
+                  </Track.IncreaseRepeatButton>
+                  <Track.DecreaseRepeatButton>
+                    <RepeatButton Command="ScrollBar.PageUpCommand" Opacity="0" Focusable="false" />
+                  </Track.DecreaseRepeatButton>
+                </Track>
+              </Grid>
+            </ControlTemplate>
+          </Setter.Value>
+        </Setter>
+      </Style>
+    </ResourceDictionary>
+  </FrameworkElement.Resources>
+  <Border Background="#00FFFFFF">
+    <UIElement.Effect>
+      <DropShadowEffect Color="Black" BlurRadius="30" ShadowDepth="0" Opacity="0.8" />
+    </UIElement.Effect>
+    <Border Background="#0D0D0D" BorderBrush="#2A2A2A" BorderThickness="1">
+      <Grid>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="50" />
+          <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid RowSpan="2" ZIndex="-1">
+          <Image Name="BackgroundImage" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.4" />
+          <Rectangle>
+            <Shape.Fill>
+              <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                <GradientStop Color="#30000000" Offset="0" />
+                <GradientStop Color="#60000000" Offset="1" />
+              </LinearGradientBrush>
+            </Shape.Fill>
+          </Rectangle>
+        </Grid>
+        <Border Grid.Row="0" Background="#10000000" BorderBrush="#25FFFFFF" BorderThickness="0,0,0,1" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+          <Grid>
+            <TextBlock Text="Settings" FontSize="20" Foreground="#FFFFFFFF" FontWeight="Bold" FontFamily="{StaticResource MonacoFont}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="20,0" />
+            <Button Content="×" HorizontalAlignment="Right" Width="50" Height="50" FontSize="28" Background="#00FFFFFF" Foreground="#FFFFFFFF" BorderThickness="0" WindowChrome.IsHitTestVisibleInChrome="True" Click="Close_Click">
+              <FrameworkElement.Style>
+                <Style TargetType="{x:Type Button}">
+                  <Setter Property="Template">
+                    <Setter.Value>
+                      <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Name="border" Background="{TemplateBinding Control.Background}">
+                          <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                          <Trigger Property="UIElement.IsMouseOver" Value="True">
+                            <Setter TargetName="border" Property="Border.Background" Value="#20FFFFFF" />
+                          </Trigger>
+                        </ControlTemplate.Triggers>
+                      </ControlTemplate>
+                    </Setter.Value>
+                  </Setter>
+                </Style>
+              </FrameworkElement.Style>
+            </Button>
+          </Grid>
+        </Border>
+        <Rectangle Grid.Row="0" Height="1" VerticalAlignment="Bottom" Fill="{DynamicResource AccentColor}" Opacity="0.3" />
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="30,20" behaviors:SmoothScrollBehavior.EnableSmoothScroll="True">
+          <FrameworkElement.Resources>
+            <ResourceDictionary>
+              <Style x:Key="{x:Type ScrollBar}" TargetType="{x:Type ScrollBar}" BasedOn="{StaticResource SettingsScrollBar}" />
+            </ResourceDictionary>
+          </FrameworkElement.Resources>
+          <StackPanel>
+            <Border Background="#08000000" CornerRadius="8" Padding="20" Margin="0,0,0,16" BorderBrush="#20FFFFFF" BorderThickness="1">
+              <StackPanel>
+                <TextBlock Text="🎨 Appearance" Foreground="#FFFFFFFF" FontWeight="Bold" FontFamily="{StaticResource MonacoFont}" Margin="0,0,0,16" FontSize="16" />
+                <TextBlock Text="Accent Color" Foreground="#BBBBBB" FontSize="13" FontFamily="{StaticResource MonacoFont}" Margin="0,0,0,8" FontWeight="SemiBold" />
+                <Grid Margin="0,0,0,14">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                  </Grid.ColumnDefinitions>
+                  <TextBox Name="AccentColorInput" Height="38" Text="#FF69B4" FontFamily="{StaticResource MonacoFont}" FontSize="13" VerticalContentAlignment="Center" Padding="14,0" BorderBrush="#353535" Background="#0A0A0A" Foreground="#FFFFFFFF" TextChanged="AccentColorInput_TextChanged" />
+                  <Border Grid.Column="1" Width="38" Height="38" Margin="10,0,0,0" CornerRadius="6" BorderBrush="#353535" BorderThickness="2">
+                    <Border.Background>
+                      <SolidColorBrush x:Name="ColorPreview" Color="#FF69B4" />
+                    </Border.Background>
+                  </Border>
+                </Grid>
+                <TextBlock Text="Quick Colors" Foreground="#BBBBBB" FontSize="12" FontFamily="{StaticResource MonacoFont}" Margin="0,0,0,8" />
+                <WrapPanel Margin="0,0,0,16">
+                  <Button Background="#FF69B4" Width="42" Height="42" Margin="0,0,8,8" BorderThickness="0" ToolTip="Neon Pink" Click="Palette_Click" />
+                  <Button Background="#00FFFF" Width="42" Height="42" Margin="0,0,8,8" BorderThickness="0" ToolTip="Cyan" Click="Palette_Click" />
+                  <Button Background="#9D00FF" Width="42" Height="42" Margin="0,0,8,8" BorderThickness="0" ToolTip="Purple" Click="Palette_Click" />
+                  <Button Background="#00FF00" Width="42" Height="42" Margin="0,0,8,8" BorderThickness="0" ToolTip="Lime" Click="Palette_Click" />
+                  <Button Background="#FF0080" Width="42" Height="42" Margin="0,0,8,8" BorderThickness="0" ToolTip="Magenta" Click="Palette_Click" />
+                  <Button Background="#FF6B00" Width="42" Height="42" Margin="0,0,8,8" BorderThickness="0" ToolTip="Orange" Click="Palette_Click" />
+                </WrapPanel>
+                <TextBlock Text="Window Backgrounds" Foreground="#BBBBBB" FontSize="13" FontFamily="{StaticResource MonacoFont}" Margin="0,4,0,8" FontWeight="SemiBold" />
+                <TextBlock Text="Main Window" Foreground="#888888" FontSize="11" FontFamily="{StaticResource MonacoFont}" Margin="0,0,0,4" />
+                <Grid Margin="0,0,0,12">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                  </Grid.ColumnDefinitions>
+                  <TextBlock Name="BgPathText" Text="Default" Foreground="#888888" FontFamily="{StaticResource MonacoFont}" FontSize="12" VerticalAlignment="Center" Padding="14,0" MaxWidth="150" TextTrimming="CharacterEllipsis" />
+                  <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Content="Clear" Width="50" Height="28" Background="#2A2A2A" BorderThickness="0" Foreground="#FF5555" Margin="0,0,6,0" FontFamily="{StaticResource MonacoFont}" FontSize="11" Click="ClearMainBg_Click">
+                      <FrameworkElement.Resources>
+                        <ResourceDictionary>
+                          <Style x:Key="{x:Type Border}" TargetType="{x:Type Border}">
+                            <Setter Property="Border.CornerRadius" Value="4" />
+                          </Style>
+                        </ResourceDictionary>
+                      </FrameworkElement.Resources>
+                    </Button>
+                    <Button Content="Browse" Width="70" Height="28" Background="#1C1C1C" BorderBrush="#2E2E2E" BorderThickness="1" Foreground="#FFFFFFFF" FontFamily="{StaticResource MonacoFont}" FontSize="11" Click="PickBackground_Click">
+                      <FrameworkElement.Resources>
+                        <ResourceDictionary>
+                          <Style x:Key="{x:Type Border}" TargetType="{x:Type Border}">
+                            <Setter Property="Border.CornerRadius" Value="4" />
+                          </Style>
+                        </ResourceDictionary>
+                      </FrameworkElement.Resources>
+                    </Button>
+                  </StackPanel>
+                </Grid>
+                <TextBlock Text="Settings Window" Foreground="#888888" FontSize="11" FontFamily="{StaticResource MonacoFont}" Margin="0,0,0,4" />
+                <Grid Margin="0,0,0,12">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                  </Grid.ColumnDefinitions>
+                  <TextBlock Name="SettingsBgPathText" Text="Default" Foreground="#888888" FontFamily="{StaticResource MonacoFont}" FontSize="12" VerticalAlignment="Center" Padding="14,0" MaxWidth="150" TextTrimming="CharacterEllipsis" />
+                  <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Content="Clear" Width="50" Height="28" Background="#2A2A2A" BorderThickness="0" Foreground="#FF5555" Margin="0,0,6,0" FontFamily="{StaticResource MonacoFont}" FontSize="11" Click="ClearSettingsBg_Click">
+                      <FrameworkElement.Resources>
+                        <ResourceDictionary>
+                          <Style x:Key="{x:Type Border}" TargetType="{x:Type Border}">
+                            <Setter Property="Border.CornerRadius" Value="4" />
+                          </Style>
+                        </ResourceDictionary>
+                      </FrameworkElement.Resources>
+                    </Button>
+                    <Button Content="Browse" Width="70" Height="28" Background="#1C1C1C" BorderBrush="#2E2E2E" BorderThickness="1" Foreground="#FFFFFFFF" FontFamily="{StaticResource MonacoFont}" FontSize="11" Click="PickSettingsBg_Click">
+                      <FrameworkElement.Resources>
+                        <ResourceDictionary>
+                          <Style x:Key="{x:Type Border}" TargetType="{x:Type Border}">
+                            <Setter Property="Border.CornerRadius" Value="4" />
+                          </Style>
+                        </ResourceDictionary>
+                      </FrameworkElement.Resources>
+                    </Button>
+                  </StackPanel>
+                </Grid>
+                <TextBlock Text="Console (Output)" Foreground="#888888" FontSize="11" FontFamily="{StaticResource MonacoFont}" Margin="0,0,0,4" />
+                <Grid>
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                  </Grid.ColumnDefinitions>
+                  <TextBlock Name="ConsoleBgPathText" Text="Default" Foreground="#888888" FontFamily="{StaticResource MonacoFont}" FontSize="12" VerticalAlignment="Center" Padding="14,0" MaxWidth="150" TextTrimming="CharacterEllipsis" />
+                  <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Content="Clear" Width="50" Height="28" Background="#2A2A2A" BorderThickness="0" Foreground="#FF5555" Margin="0,0,6,0" FontFamily="{StaticResource MonacoFont}" FontSize="11" Click="ClearConsoleBg_Click">
+                      <FrameworkElement.Resources>
+                        <ResourceDictionary>
+                          <Style x:Key="{x:Type Border}" TargetType="{x:Type Border}">
+                            <Setter Property="Border.CornerRadius" Value="4" />
+                          </Style>
+                        </ResourceDictionary>
+                      </FrameworkElement.Resources>
+                    </Button>
+                    <Button Content="Browse" Width="70" Height="28" Background="#1C1C1C" BorderBrush="#2E2E2E" BorderThickness="1" Foreground="#FFFFFFFF" FontFamily="{StaticResource MonacoFont}" FontSize="11" Click="PickConsoleBg_Click">
+                      <FrameworkElement.Resources>
+                        <ResourceDictionary>
+                          <Style x:Key="{x:Type Border}" TargetType="{x:Type Border}">
+                            <Setter Property="Border.CornerRadius" Value="4" />
+                          </Style>
+                        </ResourceDictionary>
+                      </FrameworkElement.Resources>
+                    </Button>
+                  </StackPanel>
+                </Grid>
+              </StackPanel>
+            </Border>
+            <Border Background="#08000000" CornerRadius="8" Padding="20" Margin="0,0,0,16" BorderBrush="#20FFFFFF" BorderThickness="1">
+              <StackPanel>
+                <TextBlock Text="🎨 Button Color" Foreground="#FFFFFFFF" FontWeight="Bold" FontFamily="{StaticResource MonacoFont}" Margin="0,0,0,16" FontSize="16" />
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                  <Button Width="28" Height="28" Margin="0,0,14,0" Background="#00FFFFFF" Style="{StaticResource ColorDotButton}" Tag="#00000000" ToolTip="Transparent" Click="BtnColor_Click" />
+                  <Button Width="28" Height="28" Margin="0,0,14,0" Background="#99000000" Style="{StaticResource ColorDotButton}" Tag="#99000000" ToolTip="Black" Click="BtnColor_Click" />
+                  <Button Width="28" Height="28" Margin="0,0,14,0" Background="#CCFF3B30" Style="{StaticResource ColorDotButton}" Tag="#CCFF3B30" ToolTip="Red" Click="BtnColor_Click" />
+                  <Button Width="28" Height="28" Margin="0,0,14,0" Background="#CC007AFF" Style="{StaticResource ColorDotButton}" Tag="#CC007AFF" ToolTip="Blue" Click="BtnColor_Click" />
+                  <Button Width="28" Height="28" Margin="0,0,14,0" Background="#CCAF52DE" Style="{StaticResource ColorDotButton}" Tag="#CCAF52DE" ToolTip="Purple" Click="BtnColor_Click" />
+                </StackPanel>
+              </StackPanel>
+            </Border>
+            <Border Background="#08000000" CornerRadius="8" Padding="20" Margin="0,0,0,16" BorderBrush="#20FFFFFF" BorderThickness="1">
+              <StackPanel>
+                <TextBlock Text="💎 Transparency" Foreground="#FFFFFFFF" FontWeight="Bold" FontFamily="{StaticResource MonacoFont}" Margin="0,0,0,16" FontSize="16" />
+                <TextBlock Text="Window Opacity" Foreground="#BBBBBB" FontSize="13" FontFamily="{StaticResource MonacoFont}" Margin="0,0,0,6" FontWeight="SemiBold" />
+                <Grid>
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                  </Grid.ColumnDefinitions>
+                  <Slider Name="WindowOpacitySlider" Grid.Column="0" Minimum="0.5" Maximum="1.0" Value="0.95" TickFrequency="0.05" VerticalAlignment="Center" ValueChanged="WindowOpacitySlider_ValueChanged" />
+                  <TextBlock Name="WindowOpacityValue" Grid.Column="1" Text="95%" FontFamily="{StaticResource MonacoFont}" Foreground="{DynamicResource AccentColor}" FontSize="13" FontWeight="Bold" Margin="14,0,0,0" VerticalAlignment="Center" Width="50" />
+                </Grid>
+              </StackPanel>
+            </Border>
+            <Border Background="#08000000" CornerRadius="8" Padding="20" Margin="0,0,0,16" BorderBrush="#20FFFFFF" BorderThickness="1">
+              <StackPanel>
+                <TextBlock Text="⚙️ Behavior" Foreground="#FFFFFFFF" FontWeight="Bold" FontFamily="{StaticResource MonacoFont}" Margin="0,0,0,16" FontSize="16" />
+                <CheckBox Name="TopMostCheck" Foreground="#FFFFFFFF" Margin="0,8" Style="{StaticResource PremiumCheckBox}" Checked="SettingChanged" Unchecked="SettingChanged">
+                  <TextBlock Text="Always On Top" FontSize="13" FontWeight="Medium" FontFamily="{StaticResource MonacoFont}" />
+                </CheckBox>
+                <CheckBox Name="AutoAttachCheck" Foreground="#FFFFFFFF" Margin="0,8,0,14" Style="{StaticResource PremiumCheckBox}" Checked="SettingChanged" Unchecked="SettingChanged">
+                  <TextBlock Text="Auto-Inject on Startup" FontSize="13" FontWeight="Medium" FontFamily="{StaticResource MonacoFont}" />
+                </CheckBox>
+                <CheckBox Name="AutoUpdateCheck" Foreground="#FFFFFFFF" Margin="0,8,0,14" Style="{StaticResource PremiumCheckBox}" Checked="SettingChanged" Unchecked="SettingChanged">
+                  <TextBlock Text="Auto-Download Updates" FontSize="13" FontWeight="Medium" FontFamily="{StaticResource MonacoFont}" />
+                </CheckBox>
+                <Button Content="Check for Updates" Height="36" Background="#202020" BorderBrush="#353535" BorderThickness="1" Foreground="#FFFFFFFF" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,8" FontFamily="{StaticResource MonacoFont}" Click="CheckUpdates_Click" />
+              </StackPanel>
+            </Border>
+            <Border Background="#08000000" CornerRadius="8" Padding="20" Margin="0,0,0,16" BorderBrush="#20FFFFFF" BorderThickness="1">
+              <StackPanel>
+                <TextBlock Text="🎮 Discord RPC" Foreground="#FFFFFFFF" FontWeight="Bold" FontFamily="{StaticResource MonacoFont}" Margin="0,0,0,16" FontSize="16" />
+                <CheckBox Name="RpcEnabledCheck" Foreground="#FFFFFFFF" Margin="0,8" Style="{StaticResource PremiumCheckBox}" Checked="SettingChanged" Unchecked="SettingChanged">
+                  <TextBlock Text="Enable Rich Presence" FontSize="13" FontWeight="Medium" FontFamily="{StaticResource MonacoFont}" />
+                </CheckBox>
+                <CheckBox Name="ShowGameCheck" Foreground="#FFFFFFFF" Margin="0,8,0,14" Style="{StaticResource PremiumCheckBox}" Checked="SettingChanged" Unchecked="SettingChanged">
+                  <TextBlock Text="Show Active Game" FontSize="13" FontWeight="Medium" FontFamily="{StaticResource MonacoFont}" />
+                </CheckBox>
+                <TextBlock Text="Details Line" Foreground="#BBBBBB" FontSize="12" FontFamily="{StaticResource MonacoFont}" Margin="0,4,0,6" />
+                <TextBox Name="RpcDetailsInput" Height="36" Text="Scripting" FontFamily="{StaticResource MonacoFont}" VerticalContentAlignment="Center" Padding="14,0" BorderBrush="#353535" Background="#0A0A0A" Foreground="#FFFFFFFF" FontSize="12" Margin="0,0,0,12" />
+                <TextBlock Text="State Line" Foreground="#BBBBBB" FontSize="12" FontFamily="{StaticResource MonacoFont}" Margin="0,0,0,6" />
+                <TextBox Name="RpcStateInput" Height="36" Text="Fembox" FontFamily="{StaticResource MonacoFont}" VerticalContentAlignment="Center" Padding="14,0" BorderBrush="#353535" Background="#0A0A0A" Foreground="#FFFFFFFF" FontSize="12" />
+              </StackPanel>
+            </Border>
+            <Border Background="#08000000" CornerRadius="8" Padding="20" Margin="0,0,0,16" BorderBrush="#20FFFFFF" BorderThickness="1">
+              <StackPanel>
+                <TextBlock Text="🆔 User ID" Foreground="#FFFFFFFF" FontWeight="Bold" FontFamily="{StaticResource MonacoFont}" Margin="0,0,0,16" FontSize="16" />
+                <TextBlock Text="Your Unique Analytics ID" Foreground="#BBBBBB" FontSize="12" FontFamily="{StaticResource MonacoFont}" Margin="0,0,0,6" />
+                <TextBox Name="UserIdDisplay" Height="36" Text="LOADING..." FontFamily="{StaticResource MonacoFont}" VerticalContentAlignment="Center" Padding="14,0" BorderBrush="#353535" Background="#0A0A0A" Foreground="#888888" FontSize="11" IsReadOnly="True" TextWrapping="NoWrap" Margin="0,0,0,12" />
+                <Button Content="View My Stats" Height="32" Background="#20FFFFFF" BorderThickness="0" Foreground="#FFFFFFFF" FontFamily="{StaticResource MonacoFont}" FontSize="12" Style="{StaticResource PremiumButton}" Click="ViewStats_Click" />
+              </StackPanel>
+            </Border>
+            <Border Background="#08000000" CornerRadius="8" Padding="20" Margin="0,0,0,16" BorderBrush="#20FFFFFF" BorderThickness="1">
+              <StackPanel>
+                <TextBlock Text="👤 Profile Editor" Foreground="#FFFFFFFF" FontWeight="Bold" FontFamily="{StaticResource MonacoFont}" Margin="0,0,0,16" FontSize="16" />
+                <TextBlock Text="Username" Foreground="#BBBBBB" FontSize="12" FontFamily="{StaticResource MonacoFont}" Margin="0,0,0,6" />
+                <TextBox Name="ProfileUsernameBox" Height="36" Background="#0A0A0A" BorderBrush="#353535" BorderThickness="1" Foreground="#FFFFFFFF" FontFamily="{StaticResource MonacoFont}" FontSize="12" Padding="10,8" VerticalContentAlignment="Center" Margin="0,0,0,12" />
+                <TextBlock Text="Avatar URL (optional)" Foreground="#BBBBBB" FontSize="12" FontFamily="{StaticResource MonacoFont}" Margin="0,0,0,6" />
+                <TextBox Name="ProfileAvatarBox" Height="36" Background="#0A0A0A" BorderBrush="#353535" BorderThickness="1" Foreground="#FFFFFFFF" FontFamily="{StaticResource MonacoFont}" FontSize="12" Padding="10,8" VerticalContentAlignment="Center" Margin="0,0,0,12" />
+                <Button Content="💾 Save Profile" Height="36" Background="#1C5E20" BorderThickness="0" Foreground="#FFFFFFFF" FontFamily="{StaticResource MonacoFont}" FontSize="12" FontWeight="Bold" Click="SaveProfile_Click">
+                  <FrameworkElement.Resources>
+                    <ResourceDictionary>
+                      <Style x:Key="{x:Type Border}" TargetType="{x:Type Border}">
+                        <Setter Property="Border.CornerRadius" Value="6" />
+                      </Style>
+                    </ResourceDictionary>
+                  </FrameworkElement.Resources>
+                </Button>
+              </StackPanel>
+            </Border>
+            <Border Background="#08000000" CornerRadius="8" Padding="20" Margin="0,0,0,16" BorderBrush="#20FFFFFF" BorderThickness="1">
+              <StackPanel>
+                <TextBlock Text="☁️ Cloud Sync" Foreground="#FFFFFFFF" FontWeight="Bold" FontFamily="{StaticResource MonacoFont}" Margin="0,0,0,16" FontSize="16" />
+                <TextBlock Text="Backup &amp; restore all settings and scripts" Foreground="#BBBBBB" FontSize="12" FontFamily="{StaticResource MonacoFont}" Margin="0,0,0,12" />
+                <Border Background="#0A0A0A" CornerRadius="6" Padding="12" Margin="0,0,0,12" BorderBrush="#2A2A2A" BorderThickness="1">
+                  <Grid>
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="Auto" />
+                      <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Name="SyncStatusIcon" Text="●" FontSize="16" Margin="0,0,8,0" Foreground="#888888" VerticalAlignment="Center" />
+                    <StackPanel Grid.Column="1">
+                      <TextBlock Name="SyncStatusText" Text="Not synced" Foreground="#BBBBBB" FontSize="12" FontFamily="{StaticResource MonacoFont}" />
+                      <TextBlock Name="SyncDetailsText" Text="" Foreground="#666666" FontSize="10" FontFamily="{StaticResource MonacoFont}" Margin="0,2,0,0" />
+                    </StackPanel>
+                  </Grid>
+                </Border>
+                <Button Name="SyncFilesButton" Content="Sync My Files" Height="40" Background="#1C5E20" BorderThickness="0" Foreground="#FFFFFFFF" FontFamily="{StaticResource MonacoFont}" FontSize="13" FontWeight="Bold" Margin="0,0,0,12" Click="SyncFiles_Click">
+                  <FrameworkElement.Resources>
+                    <ResourceDictionary>
+                      <Style x:Key="{x:Type Border}" TargetType="{x:Type Border}">
+                        <Setter Property="Border.CornerRadius" Value="6" />
+                      </Style>
+                    </ResourceDictionary>
+                  </FrameworkElement.Resources>
+                </Button>
+                <TextBlock Text="Ensures cloud and local files are identical" Foreground="#666666" FontSize="10" FontFamily="{StaticResource MonacoFont}" TextAlignment="Center" />
+              </StackPanel>
+            </Border>
+            <Grid Margin="0,10,0,0">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+              </Grid.ColumnDefinitions>
+              <Button Content="Save Changes" Grid.Column="0" Height="46" Margin="0,0,8,0" Background="{DynamicResource AccentColor}" BorderThickness="0" Foreground="#FFFFFFFF" FontWeight="Bold" FontSize="14" FontFamily="{StaticResource MonacoFont}" Click="Save_Click">
+                <UIElement.Effect>
+                  <DropShadowEffect Color="{DynamicResource AccentColorValue}" BlurRadius="15" ShadowDepth="0" Opacity="0.6" />
+                </UIElement.Effect>
+              </Button>
+              <Button Content="Cancel" Grid.Column="1" Height="46" Margin="8,0,0,0" Background="#1C1C1C" BorderBrush="#2E2E2E" BorderThickness="1" Foreground="#FFFFFFFF" FontWeight="SemiBold" FontSize="14" FontFamily="{StaticResource MonacoFont}" Click="Close_Click" />
+            </Grid>
+          </StackPanel>
+        </ScrollViewer>
+      </Grid>
+    </Border>
+  </Border>
+</Window>

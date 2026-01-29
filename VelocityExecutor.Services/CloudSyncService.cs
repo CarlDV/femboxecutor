@@ -22,6 +22,8 @@ public static class CloudSyncService
 
 	private static bool _autoSyncEnabled = true;
 
+	public static string Version { get; set; } = "v3.0.0";
+
 	public static async Task<bool> UploadSettings()
 	{
 		try
@@ -36,7 +38,7 @@ public static class CloudSyncService
 			cloudSettingsData.FemboxecutorFiles = GetFemboxecutorFiles();
 			cloudSettingsData.WorkspaceFiles = GetWorkspaceFiles();
 			cloudSettingsData.Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-			cloudSettingsData.Version = "v2.0.2";
+			cloudSettingsData.Version = Version;
 			cloudSettingsData.Settings.ProfileAuthToken = null;
 			string json = JsonSerializer.Serialize(cloudSettingsData, new JsonSerializerOptions
 			{
@@ -178,7 +180,7 @@ public static class CloudSyncService
 				FemboxecutorFiles = mergedFembox,
 				WorkspaceFiles = mergedWorkspace,
 				Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
-				Version = "v2.0.2"
+				Version = Version
 			});
 			HttpResponseMessage uploadResponse = await _client.PostAsync("https://velocity-helper-bot.renern.workers.dev/sync/settings/" + deviceId, new StringContent(uploadJson, Encoding.UTF8, "application/json"));
 			if (uploadResponse.IsSuccessStatusCode)

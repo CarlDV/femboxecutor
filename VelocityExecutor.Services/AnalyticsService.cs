@@ -22,6 +22,8 @@ public static class AnalyticsService
 
 	private static string _authToken;
 
+	public static string Version { get; set; } = "v3.0.0";
+
 	public static void Initialize(AppSettings settings)
 	{
 		_settings = settings;
@@ -103,7 +105,7 @@ public static class AnalyticsService
 					username = Environment.UserName,
 					action = action,
 					details = details,
-					version = "v2.0.2"
+					version = Version
 				});
 				await _client.PostAsync("https://velocity-helper-bot.renern.workers.dev/analytics", new StringContent(json, Encoding.UTF8, "application/json"));
 			}

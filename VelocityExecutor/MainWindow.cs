@@ -101,11 +101,13 @@ public partial class MainWindow : Window, IComponentConnector, IStyleConnector
 		try
 		{
 			InitializeComponent();
-			VersionLabel.Text = "v2.0.2";
+			VersionLabel.Text = VERSION;
 			_scriptsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Scripts");
 			_scripts = new ObservableCollection<ScriptItem>();
 			ScriptList.ItemsSource = _scripts;
 			_settings = AppSettings.Load();
+			AnalyticsService.Version = VERSION;
+			CloudSyncService.Version = VERSION;
 			AnalyticsService.Initialize(_settings);
 			AnalyticsService.StartSession();
 			AnalyticsService.Track("Access", "App Launched");
@@ -185,7 +187,7 @@ public partial class MainWindow : Window, IComponentConnector, IStyleConnector
 		{
 			_api.StartCommunication();
 			LogConsole("=== Fembox Executor ===");
-			LogConsole("Version: v2.0.2");
+			LogConsole($"Version: {VERSION}");
 			LogConsole("API Communication: Started");
 			LogConsole("Auto-Attach: " + (_settings.AutoAttach ? "Enabled" : "Disabled"));
 			LogConsole("Discord RPC: " + (_settings.RpcEnabled ? "Enabled" : "Disabled"));
@@ -203,7 +205,7 @@ public partial class MainWindow : Window, IComponentConnector, IStyleConnector
 		{
 			AnalyticsService.TrackError("API Init Network Error", ex3.GetBaseException().Message);
 			LogConsole("=== Fembox Executor ===");
-			LogConsole("Version: v2.0.2");
+			LogConsole($"Version: {VERSION}");
 			LogConsole("API Communication: Started (Update server unreachable)");
 			LogConsole("Auto-Attach: " + (_settings.AutoAttach ? "Enabled" : "Disabled"));
 			LogConsole("Discord RPC: " + (_settings.RpcEnabled ? "Enabled" : "Disabled"));
@@ -213,7 +215,7 @@ public partial class MainWindow : Window, IComponentConnector, IStyleConnector
 		{
 			AnalyticsService.TrackError("Backend Init Failed", ex4.Message);
 			LogConsole("=== Fembox Executor ===");
-			LogConsole("Version: v2.0.2");
+			LogConsole($"Version: {VERSION}");
 			LogConsole("API Communication: Failed (" + ex4.Message + ")");
 			LogConsole("Auto-Attach: " + (_settings.AutoAttach ? "Enabled" : "Disabled"));
 			LogConsole("Discord RPC: " + (_settings.RpcEnabled ? "Enabled" : "Disabled"));
@@ -230,7 +232,7 @@ public partial class MainWindow : Window, IComponentConnector, IStyleConnector
 		}
 		AutoAttachLoop();
 		Updater.CheckPostUpdateNotification();
-		Updater.CheckRemoteForceUpdate("v2.0.2", _settings.AutoUpdate);
+		Updater.CheckRemoteForceUpdate(VERSION, _settings.AutoUpdate);
 	}
 
 	private async Task AutoAttachLoop()
@@ -694,7 +696,7 @@ public partial class MainWindow : Window, IComponentConnector, IStyleConnector
 
 	private async void CheckUpdates_Click(object sender, RoutedEventArgs e)
 	{
-		await Updater.ManualCheck("v2.0.2");
+		await Updater.ManualCheck(VERSION);
 	}
 
 	private void LoadBackground()

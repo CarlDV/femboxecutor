@@ -243,7 +243,7 @@ public partial class SettingsWindow : Window, IComponentConnector
 
 	private async void CheckUpdates_Click(object sender, RoutedEventArgs e)
 	{
-		await Updater.ManualCheck("v2.0.2");
+		await Updater.ManualCheck(MainWindow.VERSION);
 	}
 
 	private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

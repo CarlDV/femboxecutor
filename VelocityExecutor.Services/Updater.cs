@@ -194,7 +194,12 @@ public static class Updater
 			{
 				string version = File.ReadAllText(pendingUpdateFile).Trim();
 				File.Delete(pendingUpdateFile);
-				MessageBox.Show("Updated to " + version + "!", "Update Successful", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+				MessageBox.Show("Updated to " + version + "!\n\nJoin our Discord for support and updates!", "Update Successful", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+				Process.Start(new ProcessStartInfo
+				{
+					FileName = "https://discord.gg/FfT5Nn7X7m",
+					UseShellExecute = true
+				});
 			}
 		}
 		catch

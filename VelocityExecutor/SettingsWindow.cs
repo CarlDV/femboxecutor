@@ -39,73 +39,9 @@ public partial class SettingsWindow : Window, IComponentConnector
 		_settings = settings;
 		LoadSettings();
 		LoadBackground();
-		UpdateSyncStatus();
 		_isLoaded = true;
 	}
 
-	private async void SyncFiles_Click(object sender, RoutedEventArgs e)
-	{
-		try
-		{
-			SyncFilesButton.IsEnabled = false;
-			SyncFilesButton.Content = "Syncing...";
-			UpdateSyncStatus(SyncState.Syncing);
-			bool num = await CloudSyncService.MergeSyncFiles();
-			UpdateSyncStatus();
-			if (num)
-			{
-				System.Windows.MessageBox.Show("✅ Sync complete!\n\nYour files are now identical on cloud and local.", "Cloud Sync", MessageBoxButton.OK, MessageBoxImage.Asterisk);
-				return;
-			}
-			SyncStatus status = CloudSyncService.GetSyncStatus();
-			System.Windows.MessageBox.Show("❌ Sync failed!\n\n" + status.ErrorMessage, "Cloud Sync Error", MessageBoxButton.OK, MessageBoxImage.Hand);
-		}
-		catch (Exception ex)
-		{
-			System.Windows.MessageBox.Show("❌ Sync error: " + ex.Message, "Cloud Sync Error", MessageBoxButton.OK, MessageBoxImage.Hand);
-		}
-		finally
-		{
-			SyncFilesButton.IsEnabled = true;
-			SyncFilesButton.Content = "Sync My Files";
-		}
-	}
-
-	private void UpdateSyncStatus(SyncState? overrideState = null)
-	{
-		SyncStatus status = CloudSyncService.GetSyncStatus();
-		switch (overrideState ?? status.State)
-		{
-		case SyncState.Idle:
-			SyncStatusIcon.Foreground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(136, 136, 136));
-			SyncStatusText.Text = "Not synced";
-			SyncDetailsText.Text = "";
-			break;
-		case SyncState.Syncing:
-			SyncStatusIcon.Foreground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(byte.MaxValue, 204, 0));
-			SyncStatusText.Text = "Syncing...";
-			SyncDetailsText.Text = "Please wait";
-			break;
-		case SyncState.Synced:
-			SyncStatusIcon.Foreground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(40, 205, 65));
-			SyncStatusText.Text = "Synced";
-			if (status.LastSyncTime.HasValue)
-			{
-				string details = $"Last sync: {status.LastSyncTime.Value:HH:mm:ss}";
-				if (status.FilesUploaded > 0 || status.FilesDownloaded > 0)
-				{
-					details += $" | ↑{status.FilesUploaded} ↓{status.FilesDownloaded}";
-				}
-				SyncDetailsText.Text = details;
-			}
-			break;
-		case SyncState.Error:
-			SyncStatusIcon.Foreground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(byte.MaxValue, 59, 48));
-			SyncStatusText.Text = "Sync failed";
-			SyncDetailsText.Text = status.ErrorMessage ?? "Unknown error";
-			break;
-		}
-	}
 
 	public void LoadBackground()
 	{
@@ -291,70 +227,6 @@ public partial class SettingsWindow : Window, IComponentConnector
 		Hide();
 	}
 
-	private async void SaveProfile_Click(object sender, RoutedEventArgs e)
-	{
-		_ = 4;
-		try
-		{
-			string username = ProfileUsernameBox.Text.Trim();
-			string avatarUrl = ProfileAvatarBox.Text.Trim();
-			if (string.IsNullOrWhiteSpace(username))
-			{
-				System.Windows.MessageBox.Show("Please enter a username.", "Profile Editor", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-				return;
-			}
-			if (string.IsNullOrWhiteSpace(_settings.ProfileAuthToken))
-			{
-				System.Windows.MessageBox.Show("No auth token found. Please restart the executor to get a new token.", "Profile Editor", MessageBoxButton.OK, MessageBoxImage.Hand);
-				return;
-			}
-			System.Windows.Controls.Button button = (System.Windows.Controls.Button)sender;
-			button.IsEnabled = false;
-			button.Content = "Saving...";
-			using (HttpClient client = new HttpClient())
-			{
-				StringContent content = new StringContent(JsonSerializer.Serialize(new
-				{
-					username = username,
-					avatarUrl = (string.IsNullOrWhiteSpace(avatarUrl) ? null : avatarUrl),
-					authToken = _settings.ProfileAuthToken
-				}), Encoding.UTF8, "application/json");
-				HttpResponseMessage response = await client.PostAsync("https://velocity-helper-bot.renern.workers.dev/api/profile/" + _settings.AnalyticsUserId, content);
-				if (response.StatusCode == HttpStatusCode.Unauthorized)
-				{
-					button.Content = "Refreshing Auth...";
-					await Task.Delay(500);
-					string newToken = await AnalyticsService.StartSessionAsync();
-					if (!string.IsNullOrEmpty(newToken))
-					{
-						button.Content = "Retrying...";
-						StringContent retryContent = new StringContent(JsonSerializer.Serialize(new
-						{
-							username = username,
-							avatarUrl = (string.IsNullOrWhiteSpace(avatarUrl) ? null : avatarUrl),
-							authToken = newToken
-						}), Encoding.UTF8, "application/json");
-						response = await client.PostAsync("https://velocity-helper-bot.renern.workers.dev/api/profile/" + _settings.AnalyticsUserId, retryContent);
-					}
-				}
-				if (response.IsSuccessStatusCode)
-				{
-					System.Windows.MessageBox.Show("✅ Profile updated successfully!", "Profile Editor", MessageBoxButton.OK, MessageBoxImage.Asterisk);
-				}
-				else
-				{
-					System.Windows.MessageBox.Show("❌ Failed to update profile:\n" + await response.Content.ReadAsStringAsync(), "Profile Editor", MessageBoxButton.OK, MessageBoxImage.Hand);
-				}
-			}
-			button.IsEnabled = true;
-			button.Content = "\ud83d\udcbe Save Profile";
-		}
-		catch (Exception ex)
-		{
-			System.Windows.MessageBox.Show("Error: " + ex.Message, "Profile Editor", MessageBoxButton.OK, MessageBoxImage.Hand);
-		}
-	}
-
 	private void Close_Click(object sender, RoutedEventArgs e)
 	{
 		Hide();
@@ -372,22 +244,6 @@ public partial class SettingsWindow : Window, IComponentConnector
 	private async void CheckUpdates_Click(object sender, RoutedEventArgs e)
 	{
 		await Updater.ManualCheck("v2.0.2");
-	}
-
-	private void ViewStats_Click(object sender, RoutedEventArgs e)
-	{
-		try
-		{
-			string url = "https://velocity-helper-bot.renern.workers.dev/dashboard?userId=" + _settings.AnalyticsUserId;
-			Process.Start(new ProcessStartInfo
-			{
-				FileName = url,
-				UseShellExecute = true
-			});
-		}
-		catch
-		{
-		}
 	}
 
 	private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -423,5 +279,54 @@ public partial class SettingsWindow : Window, IComponentConnector
 		}
 	}
 
+	private async void UpdateVelocityApi_Click(object sender, RoutedEventArgs e)
+	{
+		const string downloadUrl = "https://realvelocity.xyz/assets/VelocityAPI_net_8.0.dll";
+		
+		try
+		{
+			UpdateApiBtn.IsEnabled = false;
+			UpdateApiStatus.Text = "Downloading latest VelocityAPI...";
+			UpdateApiStatus.Foreground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x88, 0x88, 0x88));
+
+			string exePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+			string exeDir = Path.GetDirectoryName(exePath);
+			string targetPath = Path.Combine(exeDir, "VelocityAPI.dll");
+			string updatePath = targetPath + ".update";
+
+			using (HttpClient client = new HttpClient())
+			{
+				client.Timeout = TimeSpan.FromMinutes(2);
+				byte[] dllBytes = await client.GetByteArrayAsync(downloadUrl);
+				UpdateApiStatus.Text = "Saving update...";
+				await File.WriteAllBytesAsync(updatePath, dllBytes);
+				
+				UpdateApiStatus.Text = "✓ Update downloaded! Restart to apply.";
+				UpdateApiStatus.Foreground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x00, 0xFF, 0x00));
+
+				var result = System.Windows.MessageBox.Show(
+					"VelocityAPI update downloaded successfully!\n\nThe update will be applied when you restart the application.\n\nWould you like to restart now?",
+					"Update Ready",
+					MessageBoxButton.YesNo,
+					MessageBoxImage.Question);
+
+				if (result == MessageBoxResult.Yes)
+				{
+					string currentExe = Environment.ProcessPath;
+					System.Diagnostics.Process.Start(currentExe);
+					System.Windows.Application.Current.Shutdown();
+				}
+			}
+		}
+		catch (Exception ex)
+		{
+			UpdateApiStatus.Text = $"✗ Update failed: {ex.Message}";
+			UpdateApiStatus.Foreground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0xFF, 0x55, 0x55));
+		}
+		finally
+		{
+			UpdateApiBtn.IsEnabled = true;
+		}
+	}
 
 }

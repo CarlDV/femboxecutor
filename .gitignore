@@ -1,7 +1,20 @@
+# Build outputs
 bin/
 obj/
+Publish/
+
+# IDE
 .vs/
 *.user
 *.suo
+
+# Debug/Build artifacts
 *.pdb
 *.cache
+debug_*.log
+crash.log
+pending_update.txt
+
+# Release packages
+Release-*.zip
+Release/

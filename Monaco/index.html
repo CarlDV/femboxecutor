@@ -30,25 +30,76 @@
             background-color: transparent !important;
         }
 
-        /* Ultra-smooth scrollbar */
         .monaco-editor .scrollbar .slider {
-            transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1) !important;
-        }
-
-        /* Ultra-smooth cursor with glow */
-        .monaco-editor .cursor {
-            transition: all 0.1s cubic-bezier(0.23, 1, 0.32, 1) !important;
-            box-shadow: 0 0 8px rgba(174, 175, 173, 0.5);
-        }
-
-        /* Smooth selection */
-        .monaco-editor .selected-text {
             transition: all 0.15s ease-out !important;
+            border-radius: 6px !important;
         }
 
-        /* Smooth line highlighting */
+        .monaco-editor .cursor {
+            transition: all 0.08s ease-out !important;
+        }
+
+        .monaco-editor .selected-text {
+            transition: all 0.1s ease-out !important;
+        }
+
         .monaco-editor .current-line {
-            transition: background-color 0.15s ease-out !important;
+            transition: background-color 0.1s ease-out !important;
+        }
+
+        .monaco-editor .suggest-widget {
+            border-radius: 6px !important;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
+            border: 1px solid #454545 !important;
+        }
+
+        .monaco-editor .suggest-widget .monaco-list .monaco-list-row {
+            border-radius: 4px !important;
+        }
+
+        .monaco-editor .monaco-hover {
+            border-radius: 6px !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+            border: 1px solid #454545 !important;
+        }
+
+        .monaco-editor .find-widget {
+            border-radius: 6px !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+        }
+
+        .monaco-editor .parameter-hints-widget {
+            border-radius: 6px !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+        }
+
+        .monaco-editor .sticky-widget {
+            background: linear-gradient(to bottom, rgba(30, 30, 30, 0.95), rgba(30, 30, 30, 0.85)) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .monaco-editor .line-numbers {
+            transition: color 0.15s ease-out !important;
+        }
+
+        .monaco-editor .line-numbers.active-line-number {
+            color: #c6c6c6 !important;
+        }
+
+        .monaco-editor .bracket-match {
+            border-radius: 2px !important;
+        }
+
+        .monaco-editor .focused .selected-text {
+            background-color: rgba(38, 79, 120, 0.6) !important;
+        }
+
+        .monaco-editor .wordHighlight {
+            border-radius: 2px !important;
+        }
+
+        .monaco-editor .wordHighlightStrong {
+            border-radius: 2px !important;
         }
     </style>
 </head>
@@ -112,7 +163,6 @@
                 theme: 'fembox-pro',
                 automaticLayout: true,
 
-                // Enhanced font settings
                 fontSize: 14,
                 fontFamily: "'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Consolas', 'Courier New', monospace",
                 fontLigatures: true,
@@ -120,7 +170,6 @@
                 letterSpacing: 0.5,
                 fontWeight: '400',
 
-                // Minimap with enhanced settings
                 minimap: {
                     enabled: true,
                     renderCharacters: false,
@@ -129,14 +178,14 @@
                     showSlider: 'mouseover'
                 },
 
-                // Ultra-smooth scrolling
                 smoothScrolling: true,
                 cursorSmoothCaretAnimation: 'on',
                 cursorBlinking: 'smooth',
+                cursorStyle: 'line',
+                cursorWidth: 2,
                 mouseWheelScrollSensitivity: 1.2,
                 fastScrollSensitivity: 5,
 
-                // Better editing features
                 quickSuggestions: {
                     other: true,
                     comments: false,
@@ -146,29 +195,22 @@
                 acceptSuggestionOnEnter: 'on',
                 tabCompletion: 'on',
                 wordBasedSuggestions: 'matchingDocuments',
-                parameterHints: {
-                    enabled: true
-                },
+                parameterHints: { enabled: true },
 
-                // Code intelligence
                 folding: true,
                 foldingStrategy: 'indentation',
                 showFoldingControls: 'mouseover',
                 foldingHighlight: true,
                 unfoldOnClickAfterEndOfLine: true,
 
-                // Formatting
                 formatOnPaste: true,
                 formatOnType: true,
                 autoIndent: 'full',
 
-                // Visual enhancements
                 renderLineHighlight: 'all',
                 renderLineHighlightOnlyWhenFocus: false,
                 renderWhitespace: 'selection',
                 renderControlCharacters: false,
-                renderIndentGuides: true,
-                highlightActiveIndentGuide: true,
                 bracketPairColorization: {
                     enabled: true,
                     independentColorPoolPerBracketType: true
@@ -176,41 +218,71 @@
                 guides: {
                     indentation: true,
                     bracketPairs: true,
-                    bracketPairsHorizontal: 'active'
+                    bracketPairsHorizontal: 'active',
+                    highlightActiveIndentation: true,
+                    highlightActiveBracketPair: true
                 },
 
-                // Find widget
                 find: {
                     seedSearchStringFromSelection: 'selection',
-                    autoFindInSelection: 'multiline'
+                    autoFindInSelection: 'multiline',
+                    addExtraSpaceOnTop: false
                 },
 
-                // Performance optimizations
                 scrollBeyondLastLine: false,
-                renderValidationDecorations: 'on',
+                stickyScroll: { enabled: true, maxLineCount: 5 },
+
                 suggest: {
                     filterGraceful: true,
                     localityBonus: true,
                     shareSuggestSelections: true,
                     showIcons: true,
-                    maxVisibleSuggestions: 12
+                    maxVisibleSuggestions: 12,
+                    showMethods: true,
+                    showFunctions: true,
+                    showConstructors: true,
+                    showFields: true,
+                    showVariables: true,
+                    showClasses: true,
+                    showStructs: true,
+                    showInterfaces: true,
+                    showModules: true,
+                    showProperties: true,
+                    showEvents: true,
+                    showOperators: true,
+                    showUnits: true,
+                    showValues: true,
+                    showConstants: true,
+                    showEnums: true,
+                    showEnumMembers: true,
+                    showKeywords: true,
+                    showWords: true,
+                    showColors: true,
+                    showFiles: true,
+                    showReferences: true,
+                    showFolders: true,
+                    showTypeParameters: true,
+                    showSnippets: true,
+                    insertMode: 'insert',
+                    snippetsPreventQuickSuggestions: false,
+                    preview: true,
+                    previewMode: 'prefix'
                 },
 
-                // Scrollbars with smooth behavior
                 scrollbar: {
                     vertical: 'auto',
                     horizontal: 'auto',
                     useShadows: true,
                     verticalHasArrows: false,
                     horizontalHasArrows: false,
-                    verticalScrollbarSize: 12,
-                    horizontalScrollbarSize: 12,
+                    verticalScrollbarSize: 14,
+                    horizontalScrollbarSize: 14,
                     arrowSize: 11,
                     handleMouseWheel: true,
-                    alwaysConsumeMouseWheel: false
+                    alwaysConsumeMouseWheel: false,
+                    scrollByPage: false
                 },
 
-                // Additional polish
                 padding: { top: 10, bottom: 10 },
                 lineNumbers: 'on',
                 lineNumbersMinChars: 3,
@@ -220,14 +292,112 @@
                 overviewRulerBorder: false,
                 hideCursorInOverviewRuler: true,
                 contextmenu: true,
-                mouseWheelZoom: false,
+                mouseWheelZoom: true,
                 links: true,
                 colorDecorators: true,
                 matchBrackets: 'always',
-                showDeprecated: true
+                showDeprecated: true,
+
+                inlayHints: { enabled: 'on' },
+                linkedEditing: true,
+                copyWithSyntaxHighlighting: true,
+                dragAndDrop: true,
+                emptySelectionClipboard: true,
+                dropIntoEditor: { enabled: true },
+                definitionLinkOpensInPeek: false,
+                occurrencesHighlight: 'singleFile',
+                selectionHighlight: true,
+                showUnused: true,
+                unusualLineTerminators: 'auto',
+                wordWrap: 'off',
+                wordWrapColumn: 80,
+                wrappingIndent: 'same',
+                wrappingStrategy: 'advanced'
             });
 
-            // Add Roblox Lua intellisense
+            var robloxApiSuggestions = [];
+            var apiLoaded = false;
+
+            window.LoadRobloxApiFromCSharp = function (apiJsonString) {
+                try {
+                    const api = JSON.parse(apiJsonString);
+
+                    api.Classes.forEach(cls => {
+                        if (cls.Tags && cls.Tags.includes('NotBrowsable')) return;
+
+                        robloxApiSuggestions.push({
+                            label: cls.Name,
+                            kind: monaco.languages.CompletionItemKind.Class,
+                            insertText: cls.Name,
+                            detail: `Class${cls.Superclass ? ' : ' + cls.Superclass : ''}`,
+                            documentation: cls.Description || `Roblox ${cls.Name} class`
+                        });
+
+                        if (cls.Members) {
+                            cls.Members.forEach(member => {
+                                if (member.Tags && member.Tags.includes('NotBrowsable')) return;
+
+                                let kind, insertText, detail;
+                                if (member.MemberType === 'Function') {
+                                    kind = monaco.languages.CompletionItemKind.Method;
+                                    const params = member.Parameters ? member.Parameters.map(p => p.Name).join(', ') : '';
+                                    insertText = `${member.Name}(${params})`;
+                                    detail = `${cls.Name}:${member.Name}(${params})`;
+                                } else if (member.MemberType === 'Property') {
+                                    kind = monaco.languages.CompletionItemKind.Property;
+                                    insertText = member.Name;
+                                    const valType = member.ValueType ? member.ValueType.Name : 'any';
+                                    detail = `${cls.Name}.${member.Name}: ${valType}`;
+                                } else if (member.MemberType === 'Event') {
+                                    kind = monaco.languages.CompletionItemKind.Event;
+                                    insertText = member.Name;
+                                    detail = `${cls.Name}.${member.Name} (Event)`;
+                                } else {
+                                    return;
+                                }
+
+                                robloxApiSuggestions.push({
+                                    label: member.Name,
+                                    kind: kind,
+                                    insertText: insertText,
+                                    detail: detail,
+                                    documentation: member.Description || ''
+                                });
+                            });
+                        }
+                    });
+
+                    if (api.Enums) {
+                        api.Enums.forEach(enumDef => {
+                            robloxApiSuggestions.push({
+                                label: `Enum.${enumDef.Name}`,
+                                kind: monaco.languages.CompletionItemKind.Enum,
+                                insertText: `Enum.${enumDef.Name}`,
+                                detail: 'Enum',
+                                documentation: enumDef.Description || `Roblox ${enumDef.Name} enum`
+                            });
+
+                            if (enumDef.Items) {
+                                enumDef.Items.forEach(item => {
+                                    robloxApiSuggestions.push({
+                                        label: `Enum.${enumDef.Name}.${item.Name}`,
+                                        kind: monaco.languages.CompletionItemKind.EnumMember,
+                                        insertText: `Enum.${enumDef.Name}.${item.Name}`,
+                                        detail: `= ${item.Value}`,
+                                        documentation: item.Description || ''
+                                    });
+                                });
+                            }
+                        });
+                    }
+
+                    apiLoaded = true;
+                    console.log(`Loaded ${robloxApiSuggestions.length} Roblox API suggestions from C#`);
+                } catch (e) {
+                    console.warn('Failed to parse Roblox API from C#:', e);
+                }
+            };
+
             monaco.languages.registerCompletionItemProvider('lua', {
                 provideCompletionItems: function (model, position) {
                     var word = model.getWordUntilPosition(position);
@@ -527,10 +697,160 @@
                         { label: 'nil', kind: 14, insertText: 'nil', detail: 'Nil value' },
                         { label: 'and', kind: 4, insertText: 'and', detail: 'Logical and' },
                         { label: 'or', kind: 4, insertText: 'or', detail: 'Logical or' },
-                        { label: 'not', kind: 4, insertText: 'not', detail: 'Logical not' }
+                        { label: 'not', kind: 4, insertText: 'not', detail: 'Logical not' },
+
+                        // ========== EXPLOIT ENVIRONMENT ==========
+                        { label: 'getgenv', kind: 3, insertText: 'getgenv()', detail: 'Get global environment', documentation: 'Returns the global environment table shared across all scripts' },
+                        { label: 'getrenv', kind: 3, insertText: 'getrenv()', detail: 'Get Roblox environment', documentation: 'Returns Roblox Lua environment' },
+                        { label: 'getsenv', kind: 3, insertText: 'getsenv(${1:script})', insertTextRules: 4, detail: 'Get script environment', documentation: 'Returns the environment of a script' },
+                        { label: 'getfenv', kind: 3, insertText: 'getfenv(${1:func})', insertTextRules: 4, detail: 'Get function environment' },
+                        { label: 'setfenv', kind: 3, insertText: 'setfenv(${1:func}, ${2:env})', insertTextRules: 4, detail: 'Set function environment' },
+                        { label: 'getrawmetatable', kind: 3, insertText: 'getrawmetatable(${1:object})', insertTextRules: 4, detail: 'Get raw metatable', documentation: 'Gets metatable bypassing __metatable' },
+                        { label: 'setrawmetatable', kind: 3, insertText: 'setrawmetatable(${1:object}, ${2:metatable})', insertTextRules: 4, detail: 'Set raw metatable' },
+                        { label: 'setreadonly', kind: 3, insertText: 'setreadonly(${1:table}, ${2:readonly})', insertTextRules: 4, detail: 'Set table readonly', documentation: 'Enables or disables table readonly protection' },
+                        { label: 'isreadonly', kind: 3, insertText: 'isreadonly(${1:table})', insertTextRules: 4, detail: 'Check if readonly' },
+                        { label: 'identifyexecutor', kind: 3, insertText: 'identifyexecutor()', detail: 'Get executor name', documentation: 'Returns executor name and version' },
+                        { label: 'getexecutorname', kind: 3, insertText: 'getexecutorname()', detail: 'Get executor name' },
+
+                        // ========== HOOKING & FUNCTIONS ==========
+                        { label: 'hookfunction', kind: 3, insertText: 'hookfunction(${1:original}, ${2:hook})', insertTextRules: 4, detail: 'Hook function', documentation: 'Replaces a function, returns original' },
+                        { label: 'hookmetamethod', kind: 3, insertText: 'hookmetamethod(${1:object}, \"${2:method}\", ${3:hook})', insertTextRules: 4, detail: 'Hook metamethod', documentation: 'Hooks a metamethod on an object' },
+                        { label: 'newcclosure', kind: 3, insertText: 'newcclosure(${1:func})', insertTextRules: 4, detail: 'Create C closure', documentation: 'Wraps Lua function as C closure' },
+                        { label: 'islclosure', kind: 3, insertText: 'islclosure(${1:func})', insertTextRules: 4, detail: 'Is Lua closure' },
+                        { label: 'iscclosure', kind: 3, insertText: 'iscclosure(${1:func})', insertTextRules: 4, detail: 'Is C closure' },
+                        { label: 'clonefunction', kind: 3, insertText: 'clonefunction(${1:func})', insertTextRules: 4, detail: 'Clone function' },
+                        { label: 'getinfo', kind: 3, insertText: 'getinfo(${1:func})', insertTextRules: 4, detail: 'Get debug info' },
+                        { label: 'getcallingscript', kind: 3, insertText: 'getcallingscript()', detail: 'Get calling script' },
+                        { label: 'checkcaller', kind: 3, insertText: 'checkcaller()', detail: 'Check if exploit caller', documentation: 'Returns true if called from exploit' },
+
+                        // ========== SCRIPT UTILITIES ==========
+                        { label: 'loadstring', kind: 3, insertText: 'loadstring(${1:code})()', insertTextRules: 4, detail: 'Load and execute string', documentation: 'Compiles and runs Lua code from string' },
+                        { label: 'getscripts', kind: 3, insertText: 'getscripts()', detail: 'Get all scripts', documentation: 'Returns table of all running scripts' },
+                        { label: 'getrunningscripts', kind: 3, insertText: 'getrunningscripts()', detail: 'Get running scripts' },
+                        { label: 'getloadedmodules', kind: 3, insertText: 'getloadedmodules()', detail: 'Get loaded modules' },
+                        { label: 'decompile', kind: 3, insertText: 'decompile(${1:script})', insertTextRules: 4, detail: 'Decompile script', documentation: 'Decompiles a script to source code' },
+                        { label: 'getscriptbytecode', kind: 3, insertText: 'getscriptbytecode(${1:script})', insertTextRules: 4, detail: 'Get bytecode' },
+                        { label: 'getscripthash', kind: 3, insertText: 'getscripthash(${1:script})', insertTextRules: 4, detail: 'Get script hash' },
+                        { label: 'require', kind: 3, insertText: 'require(${1:module})', insertTextRules: 4, detail: 'Require module' },
+
+                        // ========== INSTANCES & GC ==========
+                        { label: 'getinstances', kind: 3, insertText: 'getinstances()', detail: 'Get all instances', documentation: 'Returns all instances in game memory' },
+                        { label: 'getnilinstances', kind: 3, insertText: 'getnilinstances()', detail: 'Get nil instances', documentation: 'Returns instances parented to nil' },
+                        { label: 'getgc', kind: 3, insertText: 'getgc(${1:includeTables})', insertTextRules: 4, detail: 'Get garbage collector', documentation: 'Returns all Lua objects in GC' },
+                        { label: 'filtergc', kind: 3, insertText: 'filtergc(\"${1:type}\", {${2:options}})', insertTextRules: 4, detail: 'Filter GC objects' },
+                        { label: 'gethui', kind: 3, insertText: 'gethui()', detail: 'Get hidden UI', documentation: 'Returns CoreGui or hidden UI container' },
+                        { label: 'gethiddenui', kind: 3, insertText: 'gethiddenui()', detail: 'Get hidden UI' },
+                        { label: 'isnetworkowner', kind: 3, insertText: 'isnetworkowner(${1:part})', insertTextRules: 4, detail: 'Check network owner' },
+                        { label: 'sethiddenproperty', kind: 3, insertText: 'sethiddenproperty(${1:instance}, \"${2:property}\", ${3:value})', insertTextRules: 4, detail: 'Set hidden property' },
+                        { label: 'gethiddenproperty', kind: 3, insertText: 'gethiddenproperty(${1:instance}, \"${2:property}\")', insertTextRules: 4, detail: 'Get hidden property' },
+                        { label: 'setsimulationradius', kind: 3, insertText: 'setsimulationradius(${1:radius}, ${2:maxRadius})', insertTextRules: 4, detail: 'Set simulation radius' },
+
+                        // ========== CONNECTIONS & SIGNALS ==========
+                        { label: 'getconnections', kind: 3, insertText: 'getconnections(${1:signal})', insertTextRules: 4, detail: 'Get signal connections', documentation: 'Returns all connections to a signal' },
+                        { label: 'firesignal', kind: 3, insertText: 'firesignal(${1:signal}, ${2:args})', insertTextRules: 4, detail: 'Fire signal', documentation: 'Fires a signal with arguments' },
+                        { label: 'fireproximityprompt', kind: 3, insertText: 'fireproximityprompt(${1:prompt})', insertTextRules: 4, detail: 'Fire proximity prompt' },
+                        { label: 'fireclickdetector', kind: 3, insertText: 'fireclickdetector(${1:detector})', insertTextRules: 4, detail: 'Fire click detector' },
+                        { label: 'firetouchinterest', kind: 3, insertText: 'firetouchinterest(${1:part1}, ${2:part2}, ${3:toggle})', insertTextRules: 4, detail: 'Fire touch interest' },
+
+                        // ========== REMOTE SPY / NETWORK ==========
+                        { label: 'getnamecallmethod', kind: 3, insertText: 'getnamecallmethod()', detail: 'Get namecall method', documentation: 'Returns current namecall method name' },
+                        { label: 'setnamecallmethod', kind: 3, insertText: 'setnamecallmethod(${1:method})', insertTextRules: 4, detail: 'Set namecall method' },
+
+                        // ========== DRAWING LIBRARY ==========
+                        { label: 'Drawing.new', kind: 3, insertText: 'Drawing.new(\"${1:Type}\")', insertTextRules: 4, detail: 'Create drawing', documentation: 'Creates Line, Circle, Square, Triangle, Text, Image, Quad' },
+                        { label: 'Drawing Line', kind: 15, insertText: 'local line = Drawing.new(\"Line\")\nline.From = Vector2.new(${1:0}, ${2:0})\nline.To = Vector2.new(${3:100}, ${4:100})\nline.Color = Color3.fromRGB(${5:255}, ${6:255}, ${7:255})\nline.Thickness = ${8:1}\nline.Visible = true', insertTextRules: 4, detail: 'Drawing line snippet' },
+                        { label: 'Drawing Circle', kind: 15, insertText: 'local circle = Drawing.new(\"Circle\")\ncircle.Position = Vector2.new(${1:0}, ${2:0})\ncircle.Radius = ${3:50}\ncircle.Color = Color3.fromRGB(${4:255}, ${5:255}, ${6:255})\ncircle.Filled = ${7:false}\ncircle.Visible = true', insertTextRules: 4, detail: 'Drawing circle snippet' },
+                        { label: 'Drawing Text', kind: 15, insertText: 'local text = Drawing.new(\"Text\")\ntext.Position = Vector2.new(${1:0}, ${2:0})\ntext.Text = \"${3:Hello}\"\ntext.Size = ${4:18}\ntext.Color = Color3.fromRGB(${5:255}, ${6:255}, ${7:255})\ntext.Center = true\ntext.Visible = true', insertTextRules: 4, detail: 'Drawing text snippet' },
+                        { label: 'Drawing Square', kind: 15, insertText: 'local square = Drawing.new(\"Square\")\nsquare.Position = Vector2.new(${1:0}, ${2:0})\nsquare.Size = Vector2.new(${3:100}, ${4:100})\nsquare.Color = Color3.fromRGB(${5:255}, ${6:255}, ${7:255})\nsquare.Filled = ${8:false}\nsquare.Visible = true', insertTextRules: 4, detail: 'Drawing square snippet' },
+                        { label: 'isrenderobj', kind: 3, insertText: 'isrenderobj(${1:object})', insertTextRules: 4, detail: 'Check if render object' },
+                        { label: 'getrenderproperty', kind: 3, insertText: 'getrenderproperty(${1:object}, \"${2:property}\")', insertTextRules: 4, detail: 'Get render property' },
+                        { label: 'setrenderproperty', kind: 3, insertText: 'setrenderproperty(${1:object}, \"${2:property}\", ${3:value})', insertTextRules: 4, detail: 'Set render property' },
+
+                        // ========== INPUT ==========
+                        { label: 'mouse1click', kind: 3, insertText: 'mouse1click()', detail: 'Simulate left click' },
+                        { label: 'mouse1press', kind: 3, insertText: 'mouse1press()', detail: 'Press left mouse' },
+                        { label: 'mouse1release', kind: 3, insertText: 'mouse1release()', detail: 'Release left mouse' },
+                        { label: 'mouse2click', kind: 3, insertText: 'mouse2click()', detail: 'Simulate right click' },
+                        { label: 'mouse2press', kind: 3, insertText: 'mouse2press()', detail: 'Press right mouse' },
+                        { label: 'mouse2release', kind: 3, insertText: 'mouse2release()', detail: 'Release right mouse' },
+                        { label: 'mousemoverel', kind: 3, insertText: 'mousemoverel(${1:x}, ${2:y})', insertTextRules: 4, detail: 'Move mouse relative' },
+                        { label: 'mousemoveabs', kind: 3, insertText: 'mousemoveabs(${1:x}, ${2:y})', insertTextRules: 4, detail: 'Move mouse absolute' },
+                        { label: 'mousescroll', kind: 3, insertText: 'mousescroll(${1:amount})', insertTextRules: 4, detail: 'Scroll mouse wheel' },
+                        { label: 'keypress', kind: 3, insertText: 'keypress(${1:keycode})', insertTextRules: 4, detail: 'Press key' },
+                        { label: 'keyrelease', kind: 3, insertText: 'keyrelease(${1:keycode})', insertTextRules: 4, detail: 'Release key' },
+                        { label: 'isrbxactive', kind: 3, insertText: 'isrbxactive()', detail: 'Is Roblox focused', documentation: 'Returns true if Roblox window is focused' },
+                        { label: 'isgameactive', kind: 3, insertText: 'isgameactive()', detail: 'Is Roblox focused' },
+
+                        // ========== FILESYSTEM ==========
+                        { label: 'readfile', kind: 3, insertText: 'readfile(\"${1:path}\")', insertTextRules: 4, detail: 'Read file contents' },
+                        { label: 'writefile', kind: 3, insertText: 'writefile(\"${1:path}\", ${2:content})', insertTextRules: 4, detail: 'Write to file' },
+                        { label: 'appendfile', kind: 3, insertText: 'appendfile(\"${1:path}\", ${2:content})', insertTextRules: 4, detail: 'Append to file' },
+                        { label: 'loadfile', kind: 3, insertText: 'loadfile(\"${1:path}\")()', insertTextRules: 4, detail: 'Load and run file' },
+                        { label: 'isfile', kind: 3, insertText: 'isfile(\"${1:path}\")', insertTextRules: 4, detail: 'Check if file exists' },
+                        { label: 'isfolder', kind: 3, insertText: 'isfolder(\"${1:path}\")', insertTextRules: 4, detail: 'Check if folder exists' },
+                        { label: 'makefolder', kind: 3, insertText: 'makefolder(\"${1:path}\")', insertTextRules: 4, detail: 'Create folder' },
+                        { label: 'delfolder', kind: 3, insertText: 'delfolder(\"${1:path}\")', insertTextRules: 4, detail: 'Delete folder' },
+                        { label: 'delfile', kind: 3, insertText: 'delfile(\"${1:path}\")', insertTextRules: 4, detail: 'Delete file' },
+                        { label: 'listfiles', kind: 3, insertText: 'listfiles(\"${1:path}\")', insertTextRules: 4, detail: 'List files in folder' },
+
+                        // ========== HTTP & REQUESTS ==========
+                        { label: 'request', kind: 3, insertText: 'request({\n\tUrl = \"${1:url}\",\n\tMethod = \"${2:GET}\",\n\tHeaders = {},\n\tBody = \"\"\n})', insertTextRules: 4, detail: 'HTTP request', documentation: 'Makes HTTP request, returns response' },
+                        { label: 'http_request', kind: 3, insertText: 'http_request({\n\tUrl = \"${1:url}\",\n\tMethod = \"${2:GET}\"\n})', insertTextRules: 4, detail: 'HTTP request alias' },
+                        { label: 'syn.request', kind: 3, insertText: 'syn.request({\n\tUrl = \"${1:url}\",\n\tMethod = \"${2:GET}\"\n})', insertTextRules: 4, detail: 'Synapse request' },
+                        { label: 'httpget', kind: 3, insertText: 'game:HttpGet(\"${1:url}\")', insertTextRules: 4, detail: 'Simple GET request' },
+                        { label: 'getsynasset', kind: 3, insertText: 'getsynasset(\"${1:path}\")', insertTextRules: 4, detail: 'Get asset from file' },
+                        { label: 'getcustomasset', kind: 3, insertText: 'getcustomasset(\"${1:path}\")', insertTextRules: 4, detail: 'Get custom asset' },
+
+                        // ========== CLIPBOARD ==========
+                        { label: 'setclipboard', kind: 3, insertText: 'setclipboard(${1:text})', insertTextRules: 4, detail: 'Copy to clipboard' },
+                        { label: 'toclipboard', kind: 3, insertText: 'toclipboard(${1:text})', insertTextRules: 4, detail: 'Copy to clipboard' },
+
+                        // ========== WEBSOCKET ==========
+                        { label: 'WebSocket.connect', kind: 3, insertText: 'WebSocket.connect(\"${1:url}\")', insertTextRules: 4, detail: 'Connect WebSocket' },
+
+                        // ========== MISCELLANEOUS ==========
+                        { label: 'rconsoleprint', kind: 3, insertText: 'rconsoleprint(${1:text})', insertTextRules: 4, detail: 'Print to console' },
+                        { label: 'rconsoleclear', kind: 3, insertText: 'rconsoleclear()', detail: 'Clear console' },
+                        { label: 'rconsolename', kind: 3, insertText: 'rconsolename(\"${1:title}\")', insertTextRules: 4, detail: 'Set console title' },
+                        { label: 'rconsoleinput', kind: 3, insertText: 'rconsoleinput()', detail: 'Get console input' },
+                        { label: 'rconsolewarn', kind: 3, insertText: 'rconsolewarn(${1:text})', insertTextRules: 4, detail: 'Console warning' },
+                        { label: 'rconsoleerr', kind: 3, insertText: 'rconsoleerr(${1:text})', insertTextRules: 4, detail: 'Console error' },
+                        { label: 'consolecreate', kind: 3, insertText: 'consolecreate()', detail: 'Create console window' },
+                        { label: 'consoledestroy', kind: 3, insertText: 'consoledestroy()', detail: 'Destroy console window' },
+                        { label: 'messagebox', kind: 3, insertText: 'messagebox(\"${1:text}\", \"${2:title}\", ${3:0})', insertTextRules: 4, detail: 'Show message box' },
+                        { label: 'saveinstance', kind: 3, insertText: 'saveinstance(${1:game}, {${2:options}})', insertTextRules: 4, detail: 'Save game to file', documentation: 'Saves the game to a local file' },
+                        { label: 'queue_on_teleport', kind: 3, insertText: 'queue_on_teleport(${1:code})', insertTextRules: 4, detail: 'Queue script for teleport', documentation: 'Runs script after teleport' },
+                        { label: 'queueonteleport', kind: 3, insertText: 'queueonteleport(${1:code})', insertTextRules: 4, detail: 'Queue script for teleport' },
+                        { label: 'setfpscap', kind: 3, insertText: 'setfpscap(${1:fps})', insertTextRules: 4, detail: 'Set FPS cap' },
+                        { label: 'getfpscap', kind: 3, insertText: 'getfpscap()', detail: 'Get FPS cap' },
+
+                        // ========== DEBUG LIBRARY ==========
+                        { label: 'debug.getconstants', kind: 3, insertText: 'debug.getconstants(${1:func})', insertTextRules: 4, detail: 'Get function constants' },
+                        { label: 'debug.getconstant', kind: 3, insertText: 'debug.getconstant(${1:func}, ${2:index})', insertTextRules: 4, detail: 'Get specific constant' },
+                        { label: 'debug.setconstant', kind: 3, insertText: 'debug.setconstant(${1:func}, ${2:index}, ${3:value})', insertTextRules: 4, detail: 'Set constant' },
+                        { label: 'debug.getupvalues', kind: 3, insertText: 'debug.getupvalues(${1:func})', insertTextRules: 4, detail: 'Get upvalues' },
+                        { label: 'debug.getupvalue', kind: 3, insertText: 'debug.getupvalue(${1:func}, ${2:index})', insertTextRules: 4, detail: 'Get specific upvalue' },
+                        { label: 'debug.setupvalue', kind: 3, insertText: 'debug.setupvalue(${1:func}, ${2:index}, ${3:value})', insertTextRules: 4, detail: 'Set upvalue' },
+                        { label: 'debug.getprotos', kind: 3, insertText: 'debug.getprotos(${1:func})', insertTextRules: 4, detail: 'Get function protos' },
+                        { label: 'debug.getproto', kind: 3, insertText: 'debug.getproto(${1:func}, ${2:index})', insertTextRules: 4, detail: 'Get specific proto' },
+                        { label: 'debug.getstack', kind: 3, insertText: 'debug.getstack(${1:level})', insertTextRules: 4, detail: 'Get stack' },
+                        { label: 'debug.setstack', kind: 3, insertText: 'debug.setstack(${1:level}, ${2:index}, ${3:value})', insertTextRules: 4, detail: 'Set stack' },
+                        { label: 'debug.getinfo', kind: 3, insertText: 'debug.getinfo(${1:func})', insertTextRules: 4, detail: 'Get function info' },
+                        { label: 'debug.getregistry', kind: 3, insertText: 'debug.getregistry()', detail: 'Get Lua registry' },
+
+                        // ========== COMMON EXPLOIT SNIPPETS ==========
+                        { label: 'ESP Box', kind: 15, insertText: 'local function createESP(player)\n\tlocal box = Drawing.new(\"Square\")\n\tbox.Thickness = 1\n\tbox.Color = Color3.fromRGB(255, 0, 0)\n\tbox.Filled = false\n\t-- Update loop\nend', insertTextRules: 4, detail: 'ESP box template' },
+                        { label: 'Player Loop', kind: 15, insertText: 'for _, player in pairs(game:GetService(\"Players\"):GetPlayers()) do\n\tif player ~= game:GetService(\"Players\").LocalPlayer then\n\t\t${1:-- code}\n\tend\nend', insertTextRules: 4, detail: 'Loop through players' },
+                        { label: 'LocalPlayer Setup', kind: 15, insertText: 'local Players = game:GetService(\"Players\")\nlocal LocalPlayer = Players.LocalPlayer\nlocal Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()\nlocal Humanoid = Character:WaitForChild(\"Humanoid\")\nlocal HumanoidRootPart = Character:WaitForChild(\"HumanoidRootPart\")', insertTextRules: 4, detail: 'LocalPlayer setup snippet' },
+                        { label: 'Remote Hook', kind: 15, insertText: 'local oldNamecall\noldNamecall = hookmetamethod(game, \"__namecall\", newcclosure(function(self, ...)\n\tlocal method = getnamecallmethod()\n\tif method == \"FireServer\" then\n\t\t-- Handle remote\n\tend\n\treturn oldNamecall(self, ...)\nend))', insertTextRules: 4, detail: 'Remote hook template' },
+                        { label: 'Anti-AFK', kind: 15, insertText: 'local VirtualUser = game:GetService(\"VirtualUser\")\nPlayers.LocalPlayer.Idled:Connect(function()\n\tVirtualUser:CaptureController()\n\tVirtualUser:ClickButton2(Vector2.new())\nend)', insertTextRules: 4, detail: 'Anti-AFK script' }
                     ];
 
-                    return { suggestions: suggestions.map(s => Object.assign(s, { range: range })) };
+                    var allSuggestions = suggestions.concat(
+                        robloxApiSuggestions.map(s => Object.assign({}, s, { range: range }))
+                    );
+
+                    return { suggestions: allSuggestions.map(s => Object.assign(s, { range: range })) };
 
 
                 }
@@ -551,11 +871,93 @@
                 }
             });
 
-            // Add keyboard shortcuts
             editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, function () {
-                // Trigger save via message
                 if (window.chrome && window.chrome.webview) {
                     window.chrome.webview.postMessage({ type: 'save' });
+                }
+            });
+
+            editor.addAction({
+                id: 'select-next-occurrence',
+                label: 'Select Next Occurrence',
+                keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyD],
+                run: function (ed) {
+                    ed.getAction('editor.action.addSelectionToNextFindMatch').run();
+                }
+            });
+
+            editor.addAction({
+                id: 'select-all-occurrences',
+                label: 'Select All Occurrences',
+                keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyL],
+                run: function (ed) {
+                    ed.getAction('editor.action.selectHighlights').run();
+                }
+            });
+
+            editor.addAction({
+                id: 'delete-line',
+                label: 'Delete Line',
+                keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyK],
+                run: function (ed) {
+                    ed.getAction('editor.action.deleteLines').run();
+                }
+            });
+
+            editor.addAction({
+                id: 'toggle-comment',
+                label: 'Toggle Comment',
+                keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.Slash],
+                run: function (ed) {
+                    ed.getAction('editor.action.commentLine').run();
+                }
+            });
+
+            editor.addAction({
+                id: 'move-line-up',
+                label: 'Move Line Up',
+                keybindings: [monaco.KeyMod.Alt | monaco.KeyCode.UpArrow],
+                run: function (ed) {
+                    ed.getAction('editor.action.moveLinesUpAction').run();
+                }
+            });
+
+            editor.addAction({
+                id: 'move-line-down',
+                label: 'Move Line Down',
+                keybindings: [monaco.KeyMod.Alt | monaco.KeyCode.DownArrow],
+                run: function (ed) {
+                    ed.getAction('editor.action.moveLinesDownAction').run();
+                }
+            });
+
+            editor.addAction({
+                id: 'duplicate-selection',
+                label: 'Duplicate Selection',
+                keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyD],
+                run: function (ed) {
+                    ed.getAction('editor.action.copyLinesDownAction').run();
+                }
+            });
+
+            editor.addAction({
+                id: 'select-line',
+                label: 'Select Line',
+                keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyL],
+                run: function (ed) {
+                    var selection = ed.getSelection();
+                    var startLine = selection.startLineNumber;
+                    var endLine = selection.endLineNumber;
+                    ed.setSelection(new monaco.Selection(startLine, 1, endLine + 1, 1));
+                }
+            });
+
+            editor.addAction({
+                id: 'go-to-line',
+                label: 'Go to Line',
+                keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyG],
+                run: function (ed) {
+                    ed.getAction('editor.action.gotoLine').run();
                 }
             });
         });

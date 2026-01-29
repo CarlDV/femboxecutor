@@ -26,7 +26,7 @@ namespace VelocityExecutor;
 
 public partial class MainWindow : Window, IComponentConnector, IStyleConnector
 {
-	public const string VERSION = "v2.0.2";
+	public const string VERSION = "v3.0.0";
 
 	private VelAPI _api = new VelAPI();
 
@@ -61,6 +61,8 @@ public partial class MainWindow : Window, IComponentConnector, IStyleConnector
 	private SettingsWindow _settingsWindow;
 
 	private bool _isSidebarOpen = true;
+
+	private string _originalScriptBeforeLoadstring = null;
 
 	private static readonly DependencyProperty ScrollOffsetProperty = DependencyProperty.RegisterAttached("ScrollOffset", typeof(double), typeof(MainWindow), new PropertyMetadata(0.0, OnScrollOffsetChanged));
 
@@ -107,27 +109,6 @@ public partial class MainWindow : Window, IComponentConnector, IStyleConnector
 			AnalyticsService.Initialize(_settings);
 			AnalyticsService.StartSession();
 			AnalyticsService.Track("Access", "App Launched");
-			Task.Run(async delegate
-			{
-				_ = 1;
-				try
-				{
-					if (_settings.CloudSyncEnabled && _settings.AutoSyncOnStartup && await CloudSyncService.HasCloudSettings())
-					{
-						await CloudSyncService.DownloadSettings(applyImmediately: true);
-						base.Dispatcher.Invoke(delegate
-						{
-							LogConsole("[Cloud Sync] Settings restored from cloud");
-							LoadBackground();
-							UpdateAccentColor();
-							ApplyOpacity();
-						});
-					}
-				}
-				catch (Exception)
-				{
-				}
-			});
 			AppDomain.CurrentDomain.UnhandledException += delegate(object s, UnhandledExceptionEventArgs e)
 			{
 				string text = e.ExceptionObject.ToString();
@@ -711,47 +692,6 @@ public partial class MainWindow : Window, IComponentConnector, IStyleConnector
 		}
 	}
 
-	private async void CloudSync_Click(object sender, RoutedEventArgs e)
-	{
-		try
-		{
-			if (MessageBox.Show("This will sync all your files between cloud and local.\n\nFiles on cloud will be downloaded if missing locally.\nFiles on local will be uploaded if missing on cloud.\n\nContinue?", "Cloud Sync", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-			{
-				bool num = await CloudSyncService.MergeSyncFiles();
-				SyncStatus status = CloudSyncService.GetSyncStatus();
-				if (num)
-				{
-					MessageBox.Show($"✅ Sync complete!\n\n↑ {status.FilesUploaded} files uploaded\n↓ {status.FilesDownloaded} files downloaded\n\nYour files are now identical on cloud and local.", "Cloud Sync Success", MessageBoxButton.OK, MessageBoxImage.Asterisk);
-				}
-				else
-				{
-					MessageBox.Show("❌ Sync failed!\n\n" + status.ErrorMessage, "Cloud Sync Error", MessageBoxButton.OK, MessageBoxImage.Hand);
-				}
-			}
-		}
-		catch (Exception ex)
-		{
-			MessageBox.Show("❌ Sync error: " + ex.Message, "Cloud Sync Error", MessageBoxButton.OK, MessageBoxImage.Hand);
-		}
-	}
-
-	private void GlobalAnalytics_Click(object sender, RoutedEventArgs e)
-	{
-		try
-		{
-			_ = _settings.AnalyticsUserId;
-			Process.Start(new ProcessStartInfo("https://velocity-helper-bot.renern.workers.dev/dashboard")
-			{
-				UseShellExecute = true
-			});
-			AnalyticsService.Track("Access", "Global Analytics Button");
-		}
-		catch (Exception ex)
-		{
-			MessageBox.Show("Failed to open Global Analytics: " + ex.Message);
-		}
-	}
-
 	private async void CheckUpdates_Click(object sender, RoutedEventArgs e)
 	{
 		await Updater.ManualCheck("v2.0.2");
@@ -850,12 +790,42 @@ public partial class MainWindow : Window, IComponentConnector, IStyleConnector
 		}
 	}
 
-	private void MonacoEditor_NavigationCompleted(object? sender, CoreWebView2NavigationCompletedEventArgs e)
+	private async void MonacoEditor_NavigationCompleted(object? sender, CoreWebView2NavigationCompletedEventArgs e)
 	{
 		_isMonacoReady = true;
 		if (_currentScriptPath != null && File.Exists(_currentScriptPath))
 		{
 			SetMonacoContentAsync(File.ReadAllText(_currentScriptPath));
+		}
+		_ = LoadRobloxApiAsync();
+	}
+
+	private async Task LoadRobloxApiAsync()
+	{
+		try
+		{
+			var handler = new System.Net.Http.HttpClientHandler();
+			handler.SslProtocols = System.Security.Authentication.SslProtocols.Tls12 | System.Security.Authentication.SslProtocols.Tls13;
+			handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
+			
+			using var client = new System.Net.Http.HttpClient(handler);
+			client.Timeout = TimeSpan.FromSeconds(30);
+			client.DefaultRequestHeaders.UserAgent.ParseAdd("VelocityExecutor/1.0");
+			
+			string version = await client.GetStringAsync("https://setup.roblox.com/versionQTStudio");
+			version = version.Trim();
+			
+			string apiJson = await client.GetStringAsync($"https://setup.roblox.com/{version}-API-Dump.json");
+			
+			string escaped = JsonSerializer.Serialize(apiJson);
+			await MonacoEditor.ExecuteScriptAsync($"window.LoadRobloxApiFromCSharp({escaped})");
+			
+			LogConsole($"[Monaco] Loaded Roblox API ({version})");
+		}
+		catch (Exception ex)
+		{
+			LogConsole($"[Monaco] API load failed: {ex.Message}");
+			try { File.AppendAllText("debug_api.log", $"[{DateTime.Now}] API Load Error: {ex}\n"); } catch { }
 		}
 	}
 
@@ -1569,9 +1539,15 @@ public partial class MainWindow : Window, IComponentConnector, IStyleConnector
 
 	private async void FetchButton_Click(object sender, RoutedEventArgs e)
 	{
-		_ = 2;
 		try
 		{
+			if (_originalScriptBeforeLoadstring != null)
+			{
+				await SetMonacoContentAsync(_originalScriptBeforeLoadstring);
+				LogConsole($"[Show Loadstring] Reverted to original script ({_originalScriptBeforeLoadstring.Length} characters)");
+				_originalScriptBeforeLoadstring = null;
+				return;
+			}
 			string content = await GetMonacoContentAsync();
 			if (string.IsNullOrWhiteSpace(content))
 			{
@@ -1584,75 +1560,21 @@ public partial class MainWindow : Window, IComponentConnector, IStyleConnector
 				MessageBox.Show("No valid URL found in the editor content.\n\nPlease paste a loadstring like:\nloadstring(game:HttpGet(\"URL\"))()\n\nor a direct URL.", "URL Not Found", MessageBoxButton.OK, MessageBoxImage.Exclamation);
 				return;
 			}
-			LogConsole("[Fetch] Fetching script from: " + url);
+			LogConsole("[Show Loadstring] Fetching script from: " + url);
 			string script = await PastebinService.FetchScriptAsync(url);
 			if (string.IsNullOrWhiteSpace(script))
 			{
 				MessageBox.Show("The fetched content is empty.", "Empty Script", MessageBoxButton.OK, MessageBoxImage.Exclamation);
 				return;
 			}
+			_originalScriptBeforeLoadstring = content;
 			await SetMonacoContentAsync(script);
-			LogConsole($"[Fetch] Successfully loaded script ({script.Length} characters)");
-			MessageBox.Show($"Script loaded successfully!\n\nSize: {script.Length} characters", "Success", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+			LogConsole($"[Show Loadstring] Showing script ({script.Length} characters) - Click again to revert");
 		}
 		catch (Exception ex)
 		{
-			LogConsole("[Fetch] Error: " + ex.Message);
+			LogConsole("[Show Loadstring] Error: " + ex.Message);
 			MessageBox.Show("Failed to fetch script:\n" + ex.Message, "Fetch Error", MessageBoxButton.OK, MessageBoxImage.Hand);
-		}
-	}
-
-	private async void ConvertButton_Click(object sender, RoutedEventArgs e)
-	{
-		_ = 2;
-		try
-		{
-			string content = await GetMonacoContentAsync();
-			if (string.IsNullOrWhiteSpace(content))
-			{
-				MessageBox.Show("Editor is empty. Please write a script first.", "No Content", MessageBoxButton.OK, MessageBoxImage.Asterisk);
-			}
-			else
-			{
-				if (content.Trim().StartsWith("loadstring(") && MessageBox.Show("The content appears to already be a loadstring.\n\nDo you want to convert it anyway?", "Already a Loadstring", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
-				{
-					return;
-				}
-				var (isValid, error) = PastebinService.ValidateLuaSyntax(content);
-				if (isValid || MessageBox.Show("Script may have syntax errors:\n" + error + "\n\nDo you want to upload anyway?", "Syntax Warning", MessageBoxButton.YesNo, MessageBoxImage.Exclamation) != MessageBoxResult.No)
-				{
-					LogConsole($"[Convert] Uploading script to Cloud ({content.Length} characters)...");
-					string cachedUrl = LoadstringCache.GetCachedUrl(content);
-					bool wasCached = false;
-					string rawUrl;
-					if (cachedUrl != null)
-					{
-						rawUrl = cachedUrl;
-						wasCached = true;
-						LogConsole("[Convert] Found cached upload: " + rawUrl);
-					}
-					else
-					{
-						rawUrl = await PastebinService.UploadScriptAsync(content);
-						LogConsole("[Convert] Uploaded: " + rawUrl);
-					}
-					if (string.IsNullOrEmpty(rawUrl))
-					{
-						MessageBox.Show("Failed to upload script.", "Upload Failed", MessageBoxButton.OK, MessageBoxImage.Hand);
-						return;
-					}
-					string loadstring = "loadstring(game:HttpGet(\"" + rawUrl + "\"))()";
-					await SetMonacoContentAsync(loadstring);
-					string cacheMsg = (wasCached ? "\n\n✓ Reused existing paste (deduplication)" : "\n\n✓ New paste created");
-					LogConsole("[Convert] Success! " + loadstring);
-					MessageBox.Show($"Script uploaded successfully!{cacheMsg}\n\nURL: {rawUrl}\n\nThe loadstring has been placed in your editor.", "Success", MessageBoxButton.OK, MessageBoxImage.Asterisk);
-				}
-			}
-		}
-		catch (Exception ex)
-		{
-			LogConsole("[Convert] Error: " + ex.Message);
-			MessageBox.Show("Failed to convert to loadstring:\n" + ex.Message, "Conversion Error", MessageBoxButton.OK, MessageBoxImage.Hand);
 		}
 	}
 

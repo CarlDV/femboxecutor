@@ -241,12 +241,6 @@
                 </Ellipse>
               </StackPanel>
               <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,4,0">
-                <Button Style="{StaticResource TitleButton}" Width="40" Height="50" ToolTip="Cloud Sync" Click="CloudSync_Click">
-                  <TextBlock Text="☁" FontSize="16" Foreground="{StaticResource TextSecondary}" />
-                </Button>
-                <Button Style="{StaticResource TitleButton}" Width="40" Height="50" ToolTip="Global Analytics" Click="GlobalAnalytics_Click">
-                  <TextBlock Text="🌐" FontSize="16" Foreground="{StaticResource TextSecondary}" />
-                </Button>
                 <Button Style="{StaticResource TitleButton}" Width="40" Height="50" ToolTip="New Script" Click="AddScript_Click">
                   <Path Data="{StaticResource IconAdd}" Fill="{StaticResource TextSecondary}" Width="14" Height="14" Stretch="Uniform" />
                 </Button>
@@ -514,9 +508,6 @@
               <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,20,0" VerticalAlignment="Center">
                 <Button Name="FetchButton" Style="{StaticResource ActionButton}" ToolTip="Show Script from Loadstring" Click="FetchButton_Click">
                   <Path Data="{StaticResource IconFetch}" Width="18" Height="18" Stretch="Uniform" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
-                </Button>
-                <Button Name="ConvertButton" Style="{StaticResource ActionButton}" ToolTip="Convert to Loadstring" Click="ConvertButton_Click">
-                  <Path Data="{StaticResource IconLoadstring}" Width="18" Height="18" Stretch="Uniform" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
                 </Button>
                 <Button Name="HistoryButton" Style="{StaticResource ActionButton}" ToolTip="Script Library &amp; History" Click="OpenHistory_Click">
                   <Path Data="{StaticResource IconScript}" Width="18" Height="18" Stretch="Uniform" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
